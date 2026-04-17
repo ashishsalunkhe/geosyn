@@ -1,0 +1,14 @@
+{
+  "ingested_at": "2026-04-15T13:18:18.525265",
+  "source": "worldbank",
+  "metadata": {
+    "indicator_code": "NE.RSB.GNFS.ZS"
+  },
+  "data": {
+    "value": 0.924266129966064,
+    "series": "NE.RSB.GNFS.ZS",
+    "economy": "WLD",
+    "aggregate": true,
+    "time": "YR2024"
+  }
+}

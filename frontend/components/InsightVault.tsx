@@ -29,7 +29,7 @@ const InsightVault: React.FC = () => {
     return (
       <div className="p-12 text-center">
         <div className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest animate-pulse">Initializing Insight Vault...</p>
+        <p className="text-[10px] font-black text-text-muted uppercase tracking-widest animate-pulse">Loading saved reports...</p>
       </div>
     );
   }
@@ -38,34 +38,34 @@ const InsightVault: React.FC = () => {
     <div className="space-y-8 p-1 animate-in fade-in slide-in-from-bottom-4 duration-1000">
       {/* Header Stat row */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="glass-panel p-4 bg-white/5 border-l-4 border-primary">
+          <div className="glass-panel p-4 bg-panel-bg border-l-4 border-primary">
             <div className="flex items-center gap-2 mb-1">
                 <Database size={12} className="text-primary" />
-                <span className="text-[10px] font-black text-zinc-500 tracking-widest uppercase">ARCHIVED INSIGHTS</span>
+                <span className="text-[10px] font-black text-text-muted tracking-widest uppercase">ARCHIVED INSIGHTS</span>
             </div>
-            <div className="text-xl font-black text-white italic">{trends?.archive_count || 0}</div>
+            <div className="text-xl font-black text-foreground italic">{trends?.archive_count || 0}</div>
           </div>
           
-          <div className="glass-panel p-4 bg-white/5 border-l-4 border-emerald-500">
+          <div className="glass-panel p-4 bg-panel-bg border-l-4 border-success">
             <div className="flex items-center gap-2 mb-1">
-                <Shield size={12} className="text-emerald-500" />
-                <span className="text-[10px] font-black text-zinc-500 tracking-widest uppercase">AVG SYSTEM CONF</span>
+                <Shield size={12} className="text-success" />
+                <span className="text-[10px] font-black text-text-muted tracking-widest uppercase">AVG DATA QUALITY</span>
             </div>
-            <div className="text-xl font-black text-white italic">
+            <div className="text-xl font-black text-foreground italic">
                {trends?.confidence_trend?.length > 0 
                  ? (trends.confidence_trend.reduce((a:any, b:any) => a + b.v, 0) / trends.confidence_trend.length * 100).toFixed(0)
                  : 0}%
             </div>
           </div>
 
-          <div className="glass-panel p-4 bg-white/5 border-l-4 border-rose-500 md:col-span-2">
+          <div className="glass-panel p-4 bg-panel-bg border-l-4 border-error md:col-span-2">
             <div className="flex items-center gap-2 mb-1">
-                <TrendingUp size={12} className="text-rose-500" />
-                <span className="text-[10px] font-black text-zinc-500 tracking-widest uppercase">DOMINANT DIMENSION</span>
+                <TrendingUp size={12} className="text-error" />
+                <span className="text-[10px] font-black text-text-muted tracking-widest uppercase">TOP RISK THEME</span>
             </div>
-            <div className="text-xl font-black text-white italic flex items-center gap-3">
+            <div className="text-xl font-black text-foreground italic flex items-center gap-3">
                {Object.entries(trends?.thematic_dimensions || {}).sort((a:any, b:any) => b[1] - a[1])[0]?.[0].toUpperCase() || "NONE"}
-               <span className="text-[10px] text-zinc-500 normal-case font-bold not-italic font-sans">(Tactical Majority)</span>
+               <span className="text-[10px] text-text-muted normal-case font-bold not-italic font-sans">(Most active this week)</span>
             </div>
           </div>
       </div>
@@ -73,22 +73,22 @@ const InsightVault: React.FC = () => {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Main Heatmap */}
           <div className="xl:col-span-2 space-y-4">
-             <GeopoliticalMap points={[]} /> {/* Map with overall focus later */}
-             <div className="glass-panel p-6 bg-black/40 border-zinc-800">
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white flex items-center gap-3 mb-6 border-b border-zinc-800 pb-4">
+             <GeopoliticalMap points={trends?.geo_points || []} />
+             <div className="glass-panel p-6 bg-panel-bg border-border border-l-4 border-l-primary/40">
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground flex items-center gap-3 mb-6 border-b border-border pb-4">
                     <Hash size={16} className="text-primary" />
-                    Top Intelligence Topics
+                     Most Tracked Topics
                 </h3>
                 <div className="space-y-3">
                    {trends?.top_topics?.map((t: any, idx: number) => (
-                      <div key={idx} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5 hover:border-primary/40 transition-all cursor-default group">
+                      <div key={idx} className="flex items-center justify-between p-3 bg-foreground/5 rounded-xl border border-transparent hover:border-primary/40 transition-all cursor-default group">
                          <div className="flex items-center gap-4">
-                            <span className="text-[10px] font-black text-zinc-700 w-4 tracking-tighter">0{idx+1}</span>
-                            <span className="text-[12px] font-black text-white uppercase italic">{t.topic}</span>
+                            <span className="text-[10px] font-black text-text-muted/40 w-4 tracking-tighter">0{idx+1}</span>
+                            <span className="text-[12px] font-black text-foreground uppercase italic">{t.topic}</span>
                          </div>
-                         <div className="flex items-center gap-4 text-zinc-500">
-                            <span className="text-[9px] font-black tracking-widest">{t.count} SYNTHESES</span>
-                            <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform text-zinc-800" />
+                         <div className="flex items-center gap-4 text-text-muted">
+                             <span className="text-[9px] font-black tracking-widest">{t.count} ANALYSES</span>
+                            <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform text-text-muted/60" />
                          </div>
                       </div>
                    ))}
@@ -98,21 +98,21 @@ const InsightVault: React.FC = () => {
 
           {/* Right Radar & Trends */}
           <div className="space-y-6">
-              <div className="glass-panel p-6 bg-black/40 border-zinc-800">
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white flex items-center gap-3 mb-6">
+              <div className="glass-panel p-6 bg-panel-bg border-border">
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground flex items-center gap-3 mb-6">
                     <BarChart3 size={16} className="text-primary" />
-                    Global Threat Radius
+                     Risk Theme Breakdown
                 </h3>
                 {trends?.thematic_dimensions && <ThematicRadar data={trends.thematic_dimensions} />}
-                <p className="mt-4 text-[9px] font-bold text-zinc-500 italic leading-snug border-t border-zinc-900 pt-4">
-                    Aggregated tactical dimensions across all archived intelligence briefs. Radar spike indicates sectoral vulnerability.
-                </p>
+                 <p className="mt-4 text-[9px] font-bold text-text-muted italic leading-snug border-t border-border pt-4">
+                     Shows which risk themes (e.g., conflict, economic, energy) are most active across all your tracked topics. A larger spike = more coverage in that area.
+                 </p>
               </div>
 
-              <div className="glass-panel p-6 bg-black/40 border-zinc-800 h-[280px] flex flex-col items-center justify-center text-center opacity-40">
-                  <Clock size={32} className="mb-4 text-zinc-700" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-700">Chronological Narrative Drift</span>
-                  <p className="text-[8px] font-bold text-zinc-800 mt-2 px-8">Coming Soon: Sequential sentiment tracking for high-velocity topics.</p>
+              <div className="glass-panel p-6 bg-panel-bg border-border h-[280px] flex flex-col items-center justify-center text-center opacity-40">
+                  <Clock size={32} className="mb-4 text-text-muted/60" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-text-muted/80">Sentiment Over Time</span>
+                  <p className="text-[8px] font-bold text-text-muted mt-2 px-8">Coming Soon: Track how news tone shifts on your most-followed topics.</p>
               </div>
           </div>
       </div>

@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
 from app.ingestion.base import BaseProvider
+from app.ingestion.event_registry_provider import EventRegistryProvider
 
 class GDELTGKGProvider(BaseProvider):
     """
@@ -59,15 +60,18 @@ class GDELTGKGProvider(BaseProvider):
         art["source"] = publisher
         return art
 
-    def _wait_for_rate_limit(self):
-        """Ensures we respect the GDELT 5-second rate limit."""
+    def _wait_for_rate_limit(self, fail_fast: bool = False) -> bool:
+        """Ensures we respect the GDELT 5-second rate limit. Returns True if rate limited in fail_fast mode."""
         current_time = time.time()
         elapsed = current_time - GDELTGKGProvider._last_request_time
         if elapsed < self._rate_limit_seconds:
+            if fail_fast:
+                return True
             sleep_time = self._rate_limit_seconds - elapsed
             print(f"GDELT Rate Limit Sync: Sleeping for {sleep_time:.2f}s")
             time.sleep(sleep_time)
         GDELTGKGProvider._last_request_time = time.time()
+        return False
 
     def _get_tactical_fallback(self) -> List[Dict[str, Any]]:
         return [
@@ -164,13 +168,17 @@ class GDELTGKGProvider(BaseProvider):
         Wraps DOC API artlist to ensure we get the metadata needed for causal chains.
         If API fails or returns nothing, falls back to local DB search before the static list.
         """
-        self._wait_for_rate_limit()
-        
+        if self._wait_for_rate_limit(fail_fast=True):
+            print(f"GeoSyn: GDELT Rate Limited. Failing fast to trigger secondary provider.")
+
         search_type = "EXACT"
         articles = []
         
         # Inner helper to perform the actual GDELT request
         def _do_gdelt_fetch(q: str):
+            # Soft skip if we know we are backed up
+            if time.time() - GDELTGKGProvider._last_request_time < 2.0:
+                return []
             tactical_query = f'({q}) (market OR stock OR equity OR commodity OR economy OR trade)'
             params = {
                 "query": tactical_query,
@@ -192,13 +200,36 @@ class GDELTGKGProvider(BaseProvider):
         # 1. Try Exact Search
         articles = _do_gdelt_fetch(query)
         
-        # 2. Try Relaxed Search (if exact found nothing and query is long)
+        # 1.5 Try Relaxed Search (if exact found nothing and query is long)
         query_words = query.split()
         if not articles and len(query_words) > 2:
             print(f"GeoSyn: Exact GDELT empty for '{query}'. Relaxing query...")
             relaxed_query = " ".join(query_words[:3])
             articles = _do_gdelt_fetch(relaxed_query)
             if articles: search_type = "RELAXED"
+
+        # 2. Try Event Registry Fallback
+        if not articles:
+            print(f"GeoSyn: GDELT exhausted for '{query}'. Trying Event Registry Tactical Fallback...")
+            try:
+                er = EventRegistryProvider()
+                er_docs = er.fetch_raw_docs(query)
+                if er_docs:
+                    for d in er_docs:
+                        articles.append({
+                            "url": d.get("url"),
+                            "title": d.get("headline"),
+                            "seendate": d.get("date"),
+                            "sourcecountry": d.get("source_name"),
+                            "tone": 0.0,
+                            "themes": ["TACTICAL_EVENT"],
+                            "source": d.get("source_name"),
+                            "locations": [],
+                            "organizations": []
+                        })
+                    search_type = "EVENT_REGISTRY"
+            except Exception as e:
+                print(f"GeoSyn: Event Registry live fetch failed: {e}")
 
         # 3. Local DB Fallback (Tokenized search)
         if not articles and db:

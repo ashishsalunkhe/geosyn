@@ -8,5 +8,5 @@ echo "Configured Jira-aware git workflow for this repo."
 echo "Hooks path: .githooks"
 echo "Commit template: .gitmessage-jira.txt"
 echo
-echo "Recommended branch format: GEOSYN-123-short-description"
-echo "Recommended commit format: GEOSYN-123: short task description"
+echo "Recommended branch format: GEOSYN-0028-short-description"
+echo "Recommended commit format: GEOSYN-0028: Short task description"

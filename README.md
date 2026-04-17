@@ -71,9 +71,11 @@ This repo includes optional Jira-aware git tooling so commits, branches, and PRs
 
 Recommended convention:
 
-- Branch: `GEOSYN-123-short-description`
-- Commit: `GEOSYN-123: short task description`
-- PR title: `GEOSYN-123: short task description`
+- Branch: `GEOSYN-0028-short-description`
+- Commit: `GEOSYN-0028: Short task description`
+- PR title: `GEOSYN-0028: Short task description`
+
+Here `0028` is just a placeholder for the real Jira issue number in zero-padded form, for example `GEOSYN-0027` or `GEOSYN-0028`.
 
 One-time local setup:
 
@@ -81,4 +83,4 @@ One-time local setup:
 bash scripts/setup_jira_git_workflow.sh
 ```
 
-See [docs/jira_setup.md](docs/jira_setup.md) and [docs/jira_backlog.md](docs/jira_backlog.md) for details.
+See [docs/jira_setup.md](docs/jira_setup.md), [docs/jira_automation_playbook.md](docs/jira_automation_playbook.md), and [docs/jira_backlog.md](docs/jira_backlog.md) for details.

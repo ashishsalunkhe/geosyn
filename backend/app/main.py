@@ -10,27 +10,36 @@ from app.services.ingestion_service import IngestionService
 from app.services.market_service import MarketService
 from app.services.clustering_service import ClusteringService
 from app.services.nexus_service import NexusService
+from app.services.divergence_service import DivergenceService
 
 async def proactive_polling_loop():
-    """Background loop that triggers ingestion and generating alerts every 5 mins."""
+    """Industrial background loop that triggers multi-tiered ingestion every 15 mins."""
     loop_counter = 0
     while True:
         try:
-            # Sync GDELT only once per hour (skip the immediate boot sequence to prevent deadlock)
-            do_gdelt_sync = (loop_counter > 0 and loop_counter % 12 == 0)
-            print(f"GeoSyn: Initiating 5-Minute Proactive Sync... (Hourly GDELT: {do_gdelt_sync})")
-            
             db = SessionLocal()
             try:
+                # CYCLE 1: High-Frequency (Every 15 mins)
+                print(f"GeoSyn: [H-Freq] Initiating Signal Sync... (Batch #{loop_counter})")
+                
                 # 1. Sync Markets
                 market_service = MarketService(db)
                 await market_service.sync_all_markets()
                 
-                # 2. Ingest OSINT/GDELT/RSS
+                # 2. Ingest OSINT/GDELT
                 ingestion_service = IngestionService(db)
-                await ingestion_service.ingest_latest_news(sync_gdelt=do_gdelt_sync)
+                await ingestion_service.ingest_latest_news(sync_gdelt=True)
                 
-                # 3. Cluster & Detect Shocks
+                # CYCLE 2: Institutional Macro (Every 30 mins, i.e., every 2nd batch)
+                if loop_counter % 2 == 0:
+                    print(f"GeoSyn: [Anchor] Initiating Institutional Macro Sync... (IMF, WB, Labor, GDP)")
+                    await ingestion_service.ingest_institutional_macro()
+                    
+                    # 3. Tactical Divergence Analysis (Surprise Detection)
+                    divergence_service = DivergenceService(db)
+                    divergence_service.analyze_causal_shocks()
+
+                # 3. Local AI Clustering & Analysis
                 cluster_service = ClusteringService(db)
                 cluster_service.run_clustering()
                 
@@ -38,15 +47,16 @@ async def proactive_polling_loop():
                 nexus_service = NexusService(db)
                 nexus_service.sync_knowledge_graph()
                 
-                print("GeoSyn: 5-Minute Sync Complete. Alerts Updated.")
+                print(f"GeoSyn: Batch #{loop_counter} Complete. Mesh Synchronized.")
             finally:
                 db.close()
                 
             loop_counter += 1
         except Exception as e:
-            print(f"GeoSyn Polling Error: {e}")
+            print(f"GeoSyn Background Sync Error: {e}")
         
-        await asyncio.sleep(300)
+        # 15 minute interval = 900 seconds
+        await asyncio.sleep(900)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

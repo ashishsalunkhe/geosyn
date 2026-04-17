@@ -3,12 +3,16 @@ from sqlalchemy.orm import Session
 from typing import List, Type
 from app.ingestion.base import BaseProvider
 from app.ingestion.gdelt_provider import GDELTProvider
+from app.ingestion.event_registry_provider import EventRegistryProvider
 from app.ingestion.rss_provider import RSSProvider
 from app.pipelines.normalization import NormalizationPipeline
 from app.models.domain import Document, Source
 from app.db.session import SessionLocal
 
 from app.ingestion.osint_provider import OSINTProvider
+from app.ingestion.imf_provider import IMFProvider
+from app.ingestion.world_bank_provider import WorldBankProvider
+from app.ingestion.fred_provider import FREDProvider
 
 class IngestionService:
     def __init__(self, db: Session):
@@ -49,6 +53,37 @@ class IngestionService:
         self.db.commit()
         return ingested
 
+    async def ingest_institutional_macro(self):
+        """
+        Syncs high-fidelity institutional data (IMF, World Bank, BLS/BEA via FRED).
+        Executed in 30-minute batches (as approved).
+        """
+        print(f"GeoSyn: Running Institutional Macro Sync... (IMF, WB, Labor, GDP)")
+        
+        imf = IMFProvider()
+        wb = WorldBankProvider()
+        fred = FREDProvider()
+        
+        # 1. Sync IMF (Growth, Debt, Inflation)
+        try:
+            self.run_ingestion(imf)
+        except Exception as e:
+            print(f"IMF Macro Sync Error: {e}")
+            
+        # 2. Sync World Bank (Trade, Energy)
+        try:
+            self.run_ingestion(wb)
+        except Exception as e:
+            print(f"World Bank Macro Sync Error: {e}")
+            
+        # 3. Sync FRED (Labor, GDP, Rates)
+        try:
+            self.run_ingestion(fred)
+        except Exception as e:
+            print(f"FRED Macro Sync Error: {e}")
+            
+        self.db.commit()
+
     async def ingest_latest_news(self, sync_gdelt: bool = False):
         """
         Automated sync for RSS, OSINT sources, and heavily throttled GDELT sources.
@@ -64,13 +99,19 @@ class IngestionService:
             print(f"RSS Sync Error: {e}")
             docs = []
             
-        # 2. Sync GDELT (Only if flagged, e.g., hourly)
+        # 2. Sync News Signals (GDELT with Event Registry Fallback)
         if sync_gdelt:
             try:
+                print("GeoSyn: Attempting GDELT Sync...")
                 gdelt = GDELTProvider()
                 docs += self.run_ingestion(gdelt)
             except Exception as e:
-                print(f"GDELT Sync Error: {e}")
+                print(f"GeoSyn: GDELT Sync Failed ({e}). Initiating Fallback to Event Registry...")
+                try:
+                    er = EventRegistryProvider()
+                    docs += self.run_ingestion(er)
+                except Exception as er_e:
+                    print(f"GeoSyn: Event Registry Fallback also failed: {er_e}")
             
         # 3. Sync OSINT
         try:

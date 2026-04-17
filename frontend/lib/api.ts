@@ -171,3 +171,10 @@ export async function fetchPortfolioSummary() {
   if (!res.ok) throw new Error("Failed to fetch portfolio summary");
   return res.json();
 }
+export async function fetchIntelligenceComposite() {
+  const [nexus, trends] = await Promise.all([
+    fetchNexusGraph(),
+    fetchIntelligenceTrends()
+  ]);
+  return { nexus, trends };
+}

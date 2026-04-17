@@ -30,21 +30,25 @@ def get_intelligence_trends(db: Session = Depends(get_db)):
             IntelligenceArchive.total_confidence
         ).filter(IntelligenceArchive.created_at >= last_24h).order_by(IntelligenceArchive.created_at.asc()).all()
         
-        # 3. Aggregate Thematic Dimensions
+        # 3. Aggregate Thematic Dimensions & Geo Points
         archives = db.query(IntelligenceArchive).order_by(IntelligenceArchive.created_at.desc()).limit(10).all()
         thematic_agg = {
             "Military": 0, "Economic": 0, "Diplomatic": 0, "Logistic": 0, "Tech": 0
         }
+        geo_points = []
         for arch in archives:
             if arch.thematic_weights:
                 for k, v in arch.thematic_weights.items():
                     if k in thematic_agg:
                         thematic_agg[k] += v
+            if arch.geo_points:
+                geo_points.extend(arch.geo_points)
 
         return {
             "top_topics": [{"topic": t[0], "count": t[1]} for t in top_topics],
             "confidence_trend": [{"t": p[0].isoformat(), "v": p[1]} for p in confidence_points],
             "thematic_dimensions": thematic_agg,
+            "geo_points": geo_points[:50], # Limit to top 50 to prevent map overload
             "archive_count": db.query(IntelligenceArchive).count()
         }
     except Exception as e:

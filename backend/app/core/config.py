@@ -13,6 +13,13 @@ class Settings(BaseSettings):
     
     OPENAI_API_KEY: Optional[str] = None
     OPENAI_MODEL: str = "gpt-4o-mini"
+    
+    # FRED (Federal Reserve) API Key for Macro Data
+    FRED_API_KEY: Optional[str] = None
+
+    # Tactical Ingestion Keys
+    EVENT_REGISTRY_API_KEY: Optional[str] = None
+    TAVILY_API_KEY: Optional[str] = None
 
     class Config:
         case_sensitive = True

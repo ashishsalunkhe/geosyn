@@ -40,7 +40,7 @@ export default function IntelligenceBrief({ topic, ticker }: IntelligenceBriefPr
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 glass-panel h-full min-h-[400px]">
+      <div className="flex flex-col items-center justify-center p-12 glass-panel bg-panel-bg h-full min-h-[400px] rounded-2xl border border-border">
         <motion.div 
           animate={{ rotate: 360 }}
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
@@ -48,8 +48,8 @@ export default function IntelligenceBrief({ topic, ticker }: IntelligenceBriefPr
         >
           <Zap className="text-primary" size={40} />
         </motion.div>
-        <h3 className="text-sm font-black tracking-[0.2em] text-zinc-500 uppercase italic animate-pulse">
-          Synthesizing Intelligence Brief...
+        <h3 className="text-[11px] font-black tracking-[0.2em] text-text-muted uppercase italic animate-pulse">
+          Analyzing tactical topic...
         </h3>
       </div>
     );
@@ -57,10 +57,10 @@ export default function IntelligenceBrief({ topic, ticker }: IntelligenceBriefPr
 
   if (error || !data) {
     return (
-      <div className="p-8 glass-panel border-dashed border-rose-500/30 flex flex-col items-center">
-        <Info className="text-rose-500 mb-4" size={32} />
-        <p className="text-xs font-black text-rose-500 uppercase tracking-widest leading-loose text-center">
-          {error || "Select a Tactical Topic to begin analysis"}
+      <div className="p-8 glass-panel bg-panel-bg border-dashed border-error/30 flex flex-col items-center rounded-2xl">
+        <Info className="text-error mb-4" size={32} />
+        <p className="text-xs font-black text-error uppercase tracking-widest leading-loose text-center italic">
+          {error || "Select an active topic group to begin analysis"}
         </p>
       </div>
     );
@@ -73,83 +73,83 @@ export default function IntelligenceBrief({ topic, ticker }: IntelligenceBriefPr
         <div className="flex items-center justify-between mb-8">
           <div className="flex flex-col">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-black text-zinc-500 tracking-[0.2em] uppercase italic">Tactical Precision</span>
+              <span className="text-[10px] font-black text-text-muted tracking-[0.2em] uppercase italic">Strategic Analysis</span>
               {data.search_metadata?.type && (
-                <span className={`text-[8px] font-black px-1.5 py-0.5 rounded tracking-widest uppercase ${
-                  data.search_metadata.type === 'EXACT' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
-                  data.search_metadata.type === 'RELAXED' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
-                  'bg-zinc-500/10 text-zinc-500 border border-zinc-500/20'
+                <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-lg tracking-widest uppercase border ${
+                  data.search_metadata.type === 'EXACT' ? 'bg-success/10 text-success border-success/20' :
+                  data.search_metadata.type === 'RELAXED' ? 'bg-secondary text-foreground border-border' :
+                  'bg-panel-bg text-text-muted border-border'
                 }`}>
                   {data.search_metadata.type.replace('_', ' ')}
                 </span>
               )}
             </div>
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary rounded-lg shadow-lg shadow-primary/20">
-                <Target size={20} className="text-black" />
+              <div className="p-2 bg-primary rounded-xl text-white shadow-sm">
+                <Target size={18} />
               </div>
-              <h2 className="text-2xl font-black tracking-tight text-white uppercase italic">
+              <h2 className="text-2xl font-black tracking-tight text-foreground uppercase italic leading-tight">
                 {topic}
               </h2>
             </div>
           </div>
           <div className="flex items-center gap-3">
             {data.llm_enhanced && (
-              <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full">
+              <div className="flex items-center gap-2 px-4 py-1.5 bg-secondary border border-border rounded-2xl">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                <span className="text-[10px] font-black text-primary tracking-widest uppercase italic">AI Augmented</span>
+                <span className="text-[10px] font-black text-foreground tracking-widest uppercase italic">AI Augmented</span>
               </div>
             )}
           </div>
         </div>
 
         {/* GeoSyn Fragility Index (GFI) - Dual Weighted HUD */}
-        <div className="mb-10 p-6 glass-panel bg-white/[0.02] border-zinc-900 flex flex-col md:flex-row gap-8 items-center border-t-2 border-t-primary/20 shadow-2xl shadow-primary/5">
+        <div className="mb-10 p-6 glass-panel bg-panel-bg border border-border flex flex-col md:flex-row gap-8 items-center rounded-2xl shadow-sm">
             <div className="flex flex-col gap-1 items-center md:items-start min-w-[140px]">
-               <div className="text-[10px] font-black text-primary tracking-[0.3em] uppercase mb-1">Fragility Index</div>
-               <div className={`text-4xl font-black italic tracking-tighter ${
-                 data.gfi_metrics?.status === 'CRITICAL' ? 'text-rose-500' : 
-                 data.gfi_metrics?.status === 'VOLATILE' ? 'text-amber-500' : 'text-emerald-500'
+               <div className="text-[10px] font-black text-text-muted tracking-[0.3em] uppercase mb-1">Risk Level</div>
+               <div className={`text-4xl font-black italic tracking-tighter leading-none ${
+                 data.gfi_metrics?.status === 'CRITICAL' ? 'text-error' : 
+                 data.gfi_metrics?.status === 'VOLATILE' ? 'text-hazard' : 'text-success'
                }`}>
                  {data.gfi_metrics?.aggregate_score}%
                </div>
-               <div className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest bg-zinc-900 px-2 py-0.5 rounded">
-                  {data.gfi_metrics?.status || 'STABLE'} TACTICAL STATE
+               <div className="text-[8px] font-black text-text-muted uppercase tracking-widest bg-secondary px-2 py-0.5 rounded-lg mt-2">
+                  {data.gfi_metrics?.status || 'STABLE'} STATUS
                </div>
             </div>
 
             <div className="flex-1 flex flex-col md:flex-row gap-10 w-full">
                <FragilityGauge 
-                 label="Signal Volume Ratio" 
+                 label="News Coverage Level" 
                  value={data.gfi_metrics?.volume_index || 0} 
-                 color="text-amber-500" 
-                 subtext="Mention prevalence across 5,000+ OSINT signals"
+                 color="text-secondary" 
+                 subtext="Topic frequency across global news streams"
                />
                <FragilityGauge 
-                 label="Tone Intensity Delta" 
+                 label="News Alarm Level" 
                  value={data.gfi_metrics?.intensity_index || 0} 
-                 color="text-rose-500" 
-                 subtext="Weighted sentiment delta in critical narratives"
+                 color="text-error" 
+                 subtext="Intensity of language in recent reports"
                />
             </div>
         </div>
 
         {/* Tactical Tabs Navigation */}
-        <div className="flex items-center gap-1 p-1 bg-zinc-900/50 border border-zinc-800 rounded-2xl mb-12 w-fit">
+        <div className="flex items-center gap-1 p-1 bg-secondary/30 border border-border rounded-2xl mb-12 w-fit">
            {[
-             { id: "narrative", label: "Briefing", icon: Info },
-             { id: "mesh", label: "Data Mesh", icon: Database },
-             { id: "nexus", label: "Causal Nexus", icon: GitBranch },
-             { id: "exposure", label: "Exposure List", icon: User },
+             { id: "narrative", label: "Summary", icon: Info },
+             { id: "mesh", label: "Sources", icon: Database },
+             { id: "nexus", label: "Event Chain", icon: GitBranch },
+             { id: "exposure", label: "Parties", icon: User },
            ].map((tab) => (
              <button
                key={tab.id}
                onClick={() => setActiveTab(tab.id as any)}
-               className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
-                 activeTab === tab.id ? "bg-white/10 text-white shadow-lg" : "text-zinc-500 hover:text-white"
+               className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                 activeTab === tab.id ? "bg-panel-bg text-foreground shadow-sm border border-primary/20" : "text-text-muted hover:text-foreground hover:bg-foreground/5"
                }`}
              >
-               <tab.icon size={12} className={activeTab === tab.id ? 'text-primary' : 'text-zinc-700'} />
+               <tab.icon size={12} className={activeTab === tab.id ? 'text-primary' : 'text-text-muted'} />
                {tab.label}
              </button>
            ))}
@@ -164,26 +164,26 @@ export default function IntelligenceBrief({ topic, ticker }: IntelligenceBriefPr
               exit={{ opacity: 0, x: 10 }}
               className="space-y-10"
             >
-              <div className="p-6 glass-panel bg-primary/5 border-primary/20 border-l-8">
-                <p className="text-sm font-bold text-zinc-200 leading-relaxed italic">
+              <div className="p-6 glass-panel bg-panel-bg border border-border border-l-4 border-l-primary rounded-2xl shadow-sm">
+                <p className="text-sm font-bold text-foreground leading-relaxed italic">
                   "{data.narrative_summary || "Strategic synthesis in progress..."}"
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="glass-panel p-4 bg-white/5 border-l-4 border-primary">
-                  <span className="text-[10px] font-black text-zinc-500 tracking-widest uppercase block mb-1">AGGREGATED SIGNAL</span>
-                  <div className="text-lg font-black text-white italic">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="glass-panel p-5 bg-panel-bg border border-border border-l-4 border-l-primary rounded-2xl shadow-sm">
+                  <span className="text-[10px] font-black text-text-muted tracking-widest uppercase block mb-1">AGGREGATED SIGNAL</span>
+                  <div className="text-lg font-black text-foreground italic">
                     {data.timeline.length > 0 ? (data.timeline[0].tone > 0 ? "BULLISH" : "BEARISH") : "NEUTRAL"}
                   </div>
                 </div>
-                <div className="glass-panel p-4 bg-white/5 border-l-4 border-emerald-500">
-                  <span className="text-[10px] font-black text-zinc-500 tracking-widest uppercase block mb-1">EVIDENCE NODES</span>
-                  <div className="text-lg font-black text-white italic">{data.timeline.length} VERIFIED</div>
+                <div className="glass-panel p-5 bg-panel-bg border border-border border-l-4 border-l-success rounded-2xl shadow-sm">
+                  <span className="text-[10px] font-black text-text-muted tracking-widest uppercase block mb-1">EVIDENCE NODES</span>
+                  <div className="text-lg font-black text-foreground italic">{data.timeline.length} VERIFIED</div>
                 </div>
-                <div className="glass-panel p-4 bg-white/5 border-l-4 border-zinc-500 relative group transition-all">
-                  <span className="text-[10px] font-black text-zinc-500 tracking-widest uppercase block mb-1">SYSTEM CONFIDENCE</span>
-                  <div className="text-lg font-black text-white italic">
+                <div className="glass-panel p-5 bg-panel-bg border border-border border-l-4 border-l-text-muted/20 rounded-2xl shadow-sm">
+                  <span className="text-[10px] font-black text-text-muted tracking-widest uppercase block mb-1">SYSTEM CONFIDENCE</span>
+                  <div className="text-lg font-black text-foreground italic">
                     {data.confidence_metadata?.total_score || 0}%
                   </div>
                 </div>
@@ -191,11 +191,11 @@ export default function IntelligenceBrief({ topic, ticker }: IntelligenceBriefPr
 
               {/* Asset Projections */}
               {data.possible_effects && data.possible_effects.length > 0 && (
-                 <div className="space-y-6 pt-6 border-t border-zinc-900">
-                    <h3 className="text-[10px] font-black text-zinc-500 tracking-[0.2em] uppercase mb-4 flex items-center gap-2">
-                      <Zap size={12} className="text-primary" /> MARKET PROJECTED IMPACTS
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                 <div className="space-y-8 pt-6 border-t border-border">
+                    <h3 className="text-[10px] font-black text-text-muted tracking-[0.2em] uppercase mb-4 flex items-center gap-2 italic">
+                       <Zap size={12} className="text-primary" /> POTENTIAL MARKET EFFECTS
+                     </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                        {data.possible_effects.map((effect: any, idx: number) => (
                           <AssetCard key={idx} effect={effect} idx={idx} />
                        ))}
@@ -204,8 +204,8 @@ export default function IntelligenceBrief({ topic, ticker }: IntelligenceBriefPr
               )}
 
               <div className="space-y-6">
-                <h3 className="text-xs font-black tracking-[0.2em] text-zinc-500 uppercase flex items-center gap-2">
-                   <Clock size={14} className="text-primary" /> CHRONOLOGICAL INTELLIGENCE PIVOTS
+                <h3 className="text-[10px] font-black tracking-[0.2em] text-text-muted uppercase flex items-center gap-2 italic">
+                   <Clock size={14} className="text-primary" /> NEWS TIMELINE
                 </h3>
                 <div className="grid grid-cols-1 gap-4">
                   {data.timeline.map((item: any, idx: number) => (
@@ -214,30 +214,30 @@ export default function IntelligenceBrief({ topic, ticker }: IntelligenceBriefPr
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.05 }}
-                      className="glass-panel p-6 bg-white/[0.02] border-zinc-900 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-white/[0.04] transition-all group"
+                      className="glass-panel p-4 bg-panel-bg border border-border flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-primary transition-all group rounded-2xl shadow-sm"
                     >
                       <div className="flex items-start gap-4 flex-1">
-                        <div className="flex flex-col items-center gap-1 min-w-[60px] py-1 border-r border-zinc-800 mr-2">
-                           <span className="text-[10px] font-black text-primary tracking-tighter italic">Signal</span>
-                           <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">{idx + 1}</span>
+                        <div className="flex flex-col items-center gap-1 min-w-[60px] py-1 border-r border-border mr-2">
+                           <span className="text-[10px] font-black text-primary tracking-tighter italic leading-none">Signal</span>
+                           <span className="text-[8px] font-black text-text-muted uppercase tracking-widest leading-none mt-1">{idx + 1}</span>
                         </div>
-                        <div className="flex flex-col gap-1">
-                          <div className="flex items-center gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-1">
                              <span className="text-[8px] font-black text-primary/60 uppercase tracking-widest">{item.source}</span>
-                             <span className="text-[9px] font-mono text-zinc-700">{item.seendate ? new Date(item.seendate).toLocaleDateString() : 'N/A'}</span>
+                             <span className="text-[9px] font-bold text-text-muted italic">{item.seendate ? new Date(item.seendate).toLocaleDateString() : 'N/A'}</span>
                           </div>
-                          <h4 className="text-[13px] font-black text-white italic leading-snug group-hover:text-primary transition-colors cursor-pointer" onClick={() => window.open(item.url, '_blank')}>
+                          <h4 className="text-[13px] font-black text-foreground italic leading-tight group-hover:text-primary transition-colors cursor-pointer truncate uppercase" onClick={() => window.open(item.url, '_blank')}>
                              {item.title}
                           </h4>
                         </div>
                       </div>
-                      <div className="flex items-center gap-6 md:border-l border-zinc-800 md:pl-8">
+                      <div className="flex items-center gap-6 md:border-l border-border md:pl-8">
                          <div className="flex flex-col gap-1 items-end min-w-[80px]">
-                            <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">TACTICAL TONE</span>
-                            <span className={`text-xs font-black italic ${item.tone < 0 ? 'text-rose-500' : 'text-emerald-500'}`}>{item.tone}</span>
+                            <span className="text-[8px] font-black text-text-muted uppercase tracking-widest leading-none">SENTIMENT</span>
+                            <span className={`text-[13px] font-black italic leading-none mt-1 ${item.tone < 0 ? 'text-error' : 'text-success'}`}>{item.tone}</span>
                          </div>
-                         <div className="p-2 bg-zinc-900 rounded-lg text-zinc-700 group-hover:text-primary transition-all">
-                            <ChevronRight size={16} />
+                         <div className="p-2 border border-border rounded-xl text-text-muted group-hover:text-primary group-hover:border-primary transition-all bg-secondary/30">
+                            <ChevronRight size={14} />
                          </div>
                       </div>
                     </motion.div>
@@ -254,7 +254,7 @@ export default function IntelligenceBrief({ topic, ticker }: IntelligenceBriefPr
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <IntelligenceLedger records={data.standardized_mesh || []} />
+              <IntelligenceLedger records={data.timeline || []} />
             </motion.div>
           )}
 
@@ -266,19 +266,19 @@ export default function IntelligenceBrief({ topic, ticker }: IntelligenceBriefPr
                exit={{ opacity: 0, scale: 0.98 }}
                className="space-y-6"
              >
-                <div className="glass-panel bg-black/40 p-10 border-zinc-800 text-center">
-                    <Database size={40} className="text-zinc-800 mx-auto mb-6" />
-                    <h3 className="text-[10px] font-black text-white tracking-[0.2em] uppercase mb-4">Causal Chain Matrix</h3>
+                <div className="glass-panel bg-panel-bg p-10 border border-border text-center rounded-2xl shadow-sm">
+                    <Database size={40} className="text-text-muted/10 mx-auto mb-6" />
+                    <h3 className="text-[10px] font-black text-foreground tracking-[0.2em] uppercase mb-10 italic">Causal Transition Mapping</h3>
                     <div className="space-y-6 relative max-w-2xl mx-auto text-left">
-                        {(data.causal_chain || []).map((step: any, idx: number) => (
+                        {(Array.isArray(data.causal_chain) ? data.causal_chain : Object.values(data.causal_chain || {})).map((step: any, idx: number) => (
                             <div key={idx} className="flex gap-6 items-start relative pb-10">
-                                {idx < (data.causal_chain || []).length - 1 && <div className="absolute left-[13px] top-8 bottom-0 w-0.5 bg-zinc-900" />}
-                                <div className="h-7 w-7 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center relative z-10">
+                                {idx < (Array.isArray(data.causal_chain) ? data.causal_chain : Object.values(data.causal_chain || {})).length - 1 && <div className="absolute left-[13px] top-8 bottom-0 w-0.5 bg-border" />}
+                                <div className="h-7 w-7 rounded-full bg-secondary border border-border flex items-center justify-center relative z-10 shadow-sm">
                                    <span className="text-[9px] font-black text-primary italic">{idx + 1}</span>
                                 </div>
                                 <div className="flex-1 pt-1">
-                                    <h4 className="text-[10px] font-black text-zinc-400 tracking-widest uppercase mb-1">{step.event || "Causal Pivot"}</h4>
-                                    <p className="text-sm font-bold text-white italic leading-relaxed">{step.leads_to || step.effect}</p>
+                                    <h4 className="text-[10px] font-black text-text-muted tracking-widest uppercase mb-1 italic leading-none">{step.event || "Tactical Pivot"}</h4>
+                                    <p className="text-sm font-bold text-foreground italic leading-relaxed uppercase">{step.leads_to || step.effect}</p>
                                 </div>
                             </div>
                         ))}
@@ -294,7 +294,7 @@ export default function IntelligenceBrief({ topic, ticker }: IntelligenceBriefPr
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <ParticipantDirectory records={data.standardized_mesh || []} />
+              <ParticipantDirectory records={data.timeline || []} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -313,23 +313,23 @@ const AssetCard = ({ effect, idx }: { effect: any, idx: number }) => {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: idx * 0.1 }}
-      className="glass-panel p-4 bg-white/[0.02] border-zinc-900 group transition-all hover:border-primary/40"
+      className="glass-panel p-5 bg-panel-bg border border-border group transition-all hover:border-primary rounded-2xl shadow-sm"
     >
-      <div className="flex items-start justify-between mb-2">
+      <div className="flex items-start justify-between mb-4">
         <div className="flex flex-col">
-          <span className="text-[7px] font-black text-primary tracking-widest uppercase">{effect.category}</span>
-          <h4 className="text-[11px] font-black text-white italic uppercase truncate w-32">{effect.asset}</h4>
+          <span className="text-[8px] font-black text-primary tracking-widest uppercase mb-1">{effect.category}</span>
+          <h4 className="text-[13px] font-black text-foreground italic uppercase truncate w-32 leading-none">{effect.asset}</h4>
         </div>
-        <div className={`text-lg font-black ${effect.direction === 'UP' ? 'text-emerald-500' : 'text-rose-500'}`}>
+        <div className={`text-xl font-black leading-none ${effect.direction === 'UP' ? 'text-success' : 'text-error'}`}>
           {effect.direction === 'UP' ? '↑' : '↓'}
         </div>
       </div>
-      <p className="text-[9px] font-bold text-zinc-500 italic leading-tight mb-3 h-8 overflow-hidden">
-        {effect.basis}
+      <p className="text-[10px] font-bold text-text-muted italic leading-tight mb-4 h-8 overflow-hidden uppercase">
+        {typeof effect.basis === 'object' ? JSON.stringify(effect.basis) : effect.basis}
       </p>
-      <div className="flex justify-between items-center pt-2 border-t border-zinc-900">
-         <span className="text-[7px] font-black text-zinc-600 uppercase">Confidence</span>
-         <span className="text-[9px] font-mono text-zinc-400 font-bold">{Math.round(effect.confidence * 100)}%</span>
+      <div className="flex justify-between items-center pt-3 border-t border-border/60">
+         <span className="text-[8px] font-black text-text-muted uppercase tracking-widest leading-none">Confidence</span>
+         <span className="text-[10px] font-black text-foreground leading-none">{Math.round(effect.confidence * 100)}%</span>
       </div>
     </motion.div>
   );

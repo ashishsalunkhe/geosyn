@@ -1,6 +1,6 @@
-GEOSYN-123: short task description
+GEOSYN-0028: Short task description
 
 # Optional Smart Commit examples:
-# GEOSYN-123: short task description #comment implemented core change
-# GEOSYN-123: short task description #time 1h 30m
-# GEOSYN-123: short task description #transition "In Review"
+# GEOSYN-0028: Short task description #comment implemented core change
+# GEOSYN-0028: Short task description #time 1h 30m
+# GEOSYN-0028: Short task description #transition "In Review"

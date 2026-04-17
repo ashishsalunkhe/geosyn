@@ -136,21 +136,38 @@ class TimelineService:
                 # Add asset-specific projections
                 if llm_brief.get("market_projections"):
                     for proj in llm_brief["market_projections"]:
-                        possible_effects.append({
-                            "asset": proj.get("asset"),
-                            "ticker": proj.get("ticker"),
-                            "category": proj.get("category", "MACRO"),
-                            "direction": proj.get("direction"),
-                            "magnitude": proj.get("magnitude"),
-                            "basis": proj.get("rationale"),
-                            "confidence": proj.get("confidence_score", 0.75),
-                            "justification": proj.get("justification", "Extracted via context synthesis")
-                        })
+                        if isinstance(proj, dict):
+                            possible_effects.append({
+                                "asset": proj.get("asset", "Unknown"),
+                                "ticker": proj.get("ticker", ticker),
+                                "category": proj.get("category", "MACRO"),
+                                "direction": proj.get("direction", "UNKNOWN"),
+                                "magnitude": proj.get("magnitude", "LOW"),
+                                "basis": proj.get("rationale", ""),
+                                "confidence": proj.get("confidence_score", 0.75),
+                                "justification": proj.get("justification", "Extracted via context synthesis")
+                            })
+                        elif isinstance(proj, str):
+                            possible_effects.append({
+                                "asset": ticker or "STRATEGIC",
+                                "ticker": ticker,
+                                "category": "MACRO",
+                                "direction": "UNKNOWN",
+                                "magnitude": "MODERATE",
+                                "basis": proj,
+                                "confidence": 0.5,
+                                "justification": "Inferred from unstructured projection"
+                            })
 
         # 7. GeoSyn 2.0 Enrichment (Index & Mesh)
         from app.services.gpr_index_service import GPRIndexService
-        gfi_metrics = GPRIndexService.calculate_gfi(articles)
-        standardized_mesh = GPRIndexService.extract_mesh_records(articles)
+        try:
+            gfi_metrics = GPRIndexService.calculate_gfi(articles)
+            standardized_mesh = GPRIndexService.extract_mesh_records(articles)
+        except Exception as e:
+            print(f"GeoSyn: GPR Enrichment failed ({e}). Providing graceful defaults.")
+            gfi_metrics = {"aggregate_score": 0.0, "status": "UNKNOWN", "volume_index": 0, "intensity_index": 0.0, "trend": "FLAT"}
+            standardized_mesh = []
 
         # 8. Fetch Geopolitical Intensity Points for the Heatmap
         geo_points = self.gkg_provider.fetch_geo_intensity(topic)

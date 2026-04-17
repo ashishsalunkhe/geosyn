@@ -1,99 +1,142 @@
-from typing import List, Dict, Any
 import numpy as np
+from sqlalchemy.orm import Session
+from datetime import datetime, timedelta
+from app.models.domain import Document, EventCluster
+from typing import Dict, Any, List
 
 class GPRIndexService:
     """
-    Implements quantitative indexing for geopolitical risk (GeoSyn Fragility Index).
-    Calculates both Volume-based (mention frequency) and Intensity-based (tone-weighted) scores.
+    Implements the core logic for the Caldara & Iacoviello Geopolitical Risk (GPR) Index.
+    
+    The index is a ratio of 'Risk/Conflict' signals vs 'Baseline' coverage.
+    Higher GPR levels indicate increasing systemic instability.
     """
 
-    # GDELT themes that indicate high geopolitical friction
-    FRAGILITY_THEMES = {
-        "CRISISLEX_CONFLICT", "MILITARY", "ECON_WAR", "TERROR", 
-        "REBELLION", "UNREST", "SANCTIONS", "BORDER_DISPUTE",
-        "POLITICS_SCANDAL", "CYBER_ATTACK", "PROTEST"
-    }
+    # Terms associated with geopolitical risk/threat as per institutional standards
+    GPR_KEYWORDS = [
+        "war", "conflict", "threat", "sanction", "military", "terror", "crisis",
+        "attack", "missile", "invasion", "embargo", "geopolitical", "nuclear",
+        "regime", "insurgency", "mobilization", "deployment", "blocking"
+    ]
 
+    def __init__(self, db: Session):
+        self.db = db
+
+    def calculate_rolling_gpr(self, days: int = 30) -> List[Dict[str, Any]]:
+        """
+        Calculates a daily GPR index for the last X days.
+        Formula: (Count of Risk-Heavy Articles / Total Volume) * 100
+        """
+        end_date = datetime.utcnow()
+        start_date = end_date - timedelta(days=days)
+        
+        # 1. Fetch documents in window
+        docs = self.db.query(Document).filter(
+            Document.published_at.between(start_date, end_date)
+        ).all()
+        
+        if not docs:
+            return []
+
+        # 2. Group by Day
+        days_data = {}
+        for d in docs:
+            day_str = d.published_at.strftime("%Y-%m-%d")
+            if day_str not in days_data:
+                days_data[day_str] = {"total": 0, "risk_hits": 0}
+            
+            days_data[day_str]["total"] += 1
+            
+            # Check for GPR keywords in content or title
+            content_lower = (d.title + " " + (d.content or "")).lower()
+            if any(k in content_lower for k in self.GPR_KEYWORDS):
+                days_data[day_str]["risk_hits"] += 1
+
+        # 3. Compute Normalized Index
+        timeline = []
+        # Sort by date
+        sorted_days = sorted(days_data.keys())
+        for day in sorted_days:
+            counts = days_data[day]
+            index_val = (counts["risk_hits"] / counts["total"]) * 100 if counts["total"] > 0 else 0
+            timeline.append({
+                "date": day,
+                "gpr_score": round(index_val, 2),
+                "total_articles": counts["total"],
+                "risk_articles": counts["risk_hits"]
+            })
+            
+        return timeline
+
+    def get_current_gpr_level(self) -> float:
+        """Returns the average GPR index for the last 48 hours."""
+        recent = self.calculate_rolling_gpr(days=2)
+        if not recent: return 0.0
+        return round(np.mean([d["gpr_score"] for d in recent]), 2)
+        
     @staticmethod
     def calculate_gfi(articles: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
-        Main entry point for GFI calculation.
+        Calculates Geopolitical Fragility Index (GFI) metrics from a list of tactical articles.
+        Returns score, trend, and status.
         """
         if not articles:
-            return {
-                "volume_index": 0,
-                "intensity_index": 0,
-                "aggregate_score": 0,
-                "status": "STABLE"
-            }
+            return {"score": 0.0, "status": "STABLE", "trend": "FLAT"}
 
-        total_count = len(articles)
-        risk_articles = []
+        risk_hits = 0
+        total = len(articles)
         
         for art in articles:
-            themes = set(art.get("themes", []))
-            # Check if any article theme matches our fragility list
-            if themes.intersection(GPRIndexService.FRAGILITY_THEMES):
-                risk_articles.append(art)
+            content = str(art.get("title", "")) + " " + str(art.get("themes", ""))
+            content_lower = content.lower()
+            if any(k in content_lower for k in GPRIndexService.GPR_KEYWORDS):
+                risk_hits += 1
 
-        # 1. Volume Index: (Risk Signals / Total Signals) * 100
-        volume_idx = (len(risk_articles) / total_count) * 100
-
-        # 2. Intensity Index: Average Tone of Risk Articles, normalized 0-100
-        # GDELT Tone ranges -100 to +100. We care about the negative delta.
-        tones = [float(art.get("tone", 0)) for art in risk_articles]
-        if not tones:
-            intensity_idx = 0
-        else:
-            # Map -20 (Very negative) to 100, and 0+ to 0.
-            # We focus on the range [0, -20] for high friction OSINT.
-            avg_tone = np.mean(tones)
-            # intensity = max(0, min(100, abs(avg_tone) * 5))
-            intensity_idx = max(0, min(100, (abs(avg_tone) / 20.0) * 100)) if avg_tone < 0 else 0
-
-        # Aggregate: Simple average of Volume and Intensity
-        aggregate = (volume_idx + intensity_idx) / 2
+        raw_score = (risk_hits / total) * 100
 
         status = "STABLE"
-        if aggregate > 75: status = "CRITICAL"
-        elif aggregate > 50: status = "VOLATILE"
-        elif aggregate > 25: status = "UNSETTLED"
+        if raw_score >= 40:
+            status = "CRITICAL"
+        elif raw_score >= 15:
+            status = "ELEVATED"
 
         return {
-            "volume_index": round(volume_idx, 1),
-            "intensity_index": round(intensity_idx, 1),
-            "aggregate_score": round(aggregate, 1),
+            "aggregate_score": round(raw_score, 2),
+            "volume_index": total,
+            "intensity_index": round((risk_hits / (total or 1)) * 50, 1),
             "status": status,
-            "sample_size": total_count
+            "trend": "UP" if raw_score > 20 else "FLAT"
         }
 
     @staticmethod
     def extract_mesh_records(articles: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
-        Extracts standardized mesh records for the 'Intelligence Ledger'.
-        Similar to Taiyo's 'All Records' view.
+        Extracts standardized mesh entities (locations, orgs) for the frontend graph.
         """
         mesh = []
-        for i, art in enumerate(articles):
-            # Deterministic ID for UI mapping
-            record_id = f"GFI-{art.get('seendate', '0')[:8]}-{i:03d}"
+        seen = set()
+        for art in articles:
+            # Support multiple data structures
+            entities = art.get("entities", {})
+            orgs = entities.get("organizations", []) if isinstance(entities, dict) else art.get("organizations", [])
+            locs = entities.get("locations", []) if isinstance(entities, dict) else art.get("locations", [])
             
-            # Identify primary sector from themes
-            themes = art.get("themes", [])
-            primary_sector = "GENERAL"
-            if any("ECON" in t for t in themes): primary_sector = "ECONOMY"
-            elif any("MIL" in t for t in themes): primary_sector = "DEFENSE"
-            elif any("TECH" in t for t in themes) or any("CYBER" in t for t in themes): primary_sector = "TECH"
-            elif any("ENERGY" in t for t in themes): primary_sector = "ENERGY"
+            # GDELT specific themes block
+            if not orgs and "organizations" in art:
+                orgs = art["organizations"]
+            if not locs and "locations" in art:
+                locs = art["locations"]
 
-            mesh.append({
-                "id": record_id,
-                "source": art.get("source", "GLOBAL_NEWS"),
-                "title": art.get("title", "Unknown Tactical Signal"),
-                "url": art.get("url", "#"),
-                "sector": primary_sector,
-                "tone": float(art.get("tone", 0.0)),
-                "reliability": 0.85 if "REUTERS" in art.get("source", "") or "BLOOMBERG" in art.get("source", "") else 0.70,
-                "timestamp": art.get("seendate")
-            })
-        return mesh
+            for o in (orgs or []):
+                o_str = str(o).strip()
+                if o_str not in seen and len(o_str) > 2:
+                    mesh.append({"entity": o_str, "type": "ORGANIZATION", "weight": 1})
+                    seen.add(o_str)
+                    
+            for l in (locs or []):
+                l_str = str(l).strip()
+                if l_str not in seen and len(l_str) > 2:
+                    mesh.append({"entity": l_str, "type": "LOCATION", "weight": 1})
+                    seen.add(l_str)
+
+        return mesh[:20]

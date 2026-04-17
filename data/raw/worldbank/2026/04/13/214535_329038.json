@@ -1,0 +1,14 @@
+{
+  "ingested_at": "2026-04-13T21:45:35.329038",
+  "source": "worldbank",
+  "metadata": {
+    "indicator_code": "TX.VAL.FUEL.ZS.UN"
+  },
+  "data": {
+    "raw": [
+      {
+        "TX.VAL.FUEL.ZS.UN": 10.6912316954314
+      }
+    ]
+  }
+}

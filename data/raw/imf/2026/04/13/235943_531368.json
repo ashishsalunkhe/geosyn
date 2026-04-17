@@ -1,0 +1,13 @@
+{
+  "ingested_at": "2026-04-13T23:59:43.531368",
+  "source": "imf",
+  "metadata": {
+    "indicator_code": "DEBT_GDP"
+  },
+  "data": {
+    "api": {
+      "version": "1",
+      "output-method": "json"
+    }
+  }
+}
