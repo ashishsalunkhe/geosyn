@@ -1,8 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
+from app.api.deps import get_current_customer
 from app.db.session import get_db
+from app.models.v2 import CustomerV2
 from app.services.ingestion_service import IngestionService
+from app.services.exposure_import_service import ExposureImportService
 from app.ingestion.gdelt_provider import GDELTProvider
 from app.ingestion.rss_provider import RSSProvider
 from app.ingestion.youtube_provider import YouTubeProvider
@@ -46,3 +49,24 @@ def ingest_youtube(request: YouTubeIngestRequest, db: Session = Depends(get_db))
         "status": "success",
         "doc_count": len(docs)
     }
+
+
+@router.post("/exposure/csv")
+async def import_exposure_csv(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_customer: CustomerV2 = Depends(get_current_customer),
+):
+    """
+    Import customer exposure links from a CSV file.
+    Required columns:
+    source_object_type, source_object_id, relationship_type, target_entity_name
+    """
+    raw = await file.read()
+    try:
+        csv_text = raw.decode("utf-8")
+        service = ExposureImportService(db)
+        result = service.import_csv(csv_text, current_customer.id)
+        return {"status": "success", "customer_id": current_customer.id, **result}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
