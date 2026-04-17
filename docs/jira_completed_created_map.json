@@ -1,33 +1,33 @@
 {
-  "project_key": "SCRUM",
+  "project_key": "GEOSYN",
   "epics": {
-    "GeoSyn Strategy And Planning Artifacts": "SCRUM-22"
+    "GeoSyn Strategy And Planning Artifacts": "GEOSYN-22"
   },
   "tickets": [
     {
       "ordinal": 1,
-      "key": "SCRUM-23",
+      "key": "GEOSYN-23",
       "title": "Author board memo for GeoSyn strategic repositioning",
       "issue_type": "Task",
       "epic": "GeoSyn Strategy And Planning Artifacts"
     },
     {
       "ordinal": 2,
-      "key": "SCRUM-24",
+      "key": "GEOSYN-24",
       "title": "Rewrite pitch narrative around exposure-aware intelligence",
       "issue_type": "Task",
       "epic": "GeoSyn Strategy And Planning Artifacts"
     },
     {
       "ordinal": 3,
-      "key": "SCRUM-25",
+      "key": "GEOSYN-25",
       "title": "Draft 90-day execution plan for GeoSyn v2",
       "issue_type": "Task",
       "epic": "GeoSyn Strategy And Planning Artifacts"
     },
     {
       "ordinal": 4,
-      "key": "SCRUM-26",
+      "key": "GEOSYN-26",
       "title": "Draft architecture blueprint and PostgreSQL schema proposal",
       "issue_type": "Task",
       "epic": "GeoSyn Strategy And Planning Artifacts"

@@ -8,7 +8,7 @@ fi
 
 FIRST_LINE="$(head -n 1 "${MSG_FILE}" || true)"
 if ! printf '%s' "${FIRST_LINE}" | grep -qE '[A-Z][A-Z0-9]+-[0-9]+'; then
-  echo "Commit message must include a Jira issue key like SCRUM-123." >&2
-  echo "Example: SCRUM-123: add canonical event backfill" >&2
+  echo "Commit message must include a Jira issue key like GEOSYN-123." >&2
+  echo "Example: GEOSYN-123: add canonical event backfill" >&2
   exit 1
 fi

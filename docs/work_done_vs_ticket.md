@@ -4,11 +4,11 @@
 
 This ledger maps the work already completed in the repo to Jira tickets and suggests branch and commit naming aligned with the company convention:
 
-`SCRUM-123: short task description`
+`GEOSYN-123: short task description`
 
 ## Completed Work
 
-### `SCRUM-6`
+### `GEOSYN-6`
 
 Scope:
 
@@ -24,9 +24,9 @@ Relevant files:
 
 Suggested commit:
 
-- `SCRUM-6: establish alembic migration workflow`
+- `GEOSYN-6: establish alembic migration workflow`
 
-### `SCRUM-7`
+### `GEOSYN-7`
 
 Scope:
 
@@ -40,9 +40,9 @@ Relevant files:
 
 Suggested commit:
 
-- `SCRUM-7: add canonical v2 event models`
+- `GEOSYN-7: add canonical v2 event models`
 
-### `SCRUM-8`
+### `GEOSYN-8`
 
 Scope:
 
@@ -54,9 +54,9 @@ Relevant files:
 
 Suggested commit:
 
-- `SCRUM-8: backfill legacy event clusters into canonical events`
+- `GEOSYN-8: backfill legacy event clusters into canonical events`
 
-### `SCRUM-9`
+### `GEOSYN-9`
 
 Scope:
 
@@ -72,9 +72,9 @@ Relevant files:
 
 Suggested commit:
 
-- `SCRUM-9: add customer and watchlist foundation`
+- `GEOSYN-9: add customer and watchlist foundation`
 
-### `SCRUM-10`
+### `GEOSYN-10`
 
 Scope:
 
@@ -86,9 +86,9 @@ Relevant files:
 
 Suggested commit:
 
-- `SCRUM-10: add exposure link foundation`
+- `GEOSYN-10: add exposure link foundation`
 
-### `SCRUM-11`
+### `GEOSYN-11`
 
 Scope:
 
@@ -103,9 +103,9 @@ Relevant files:
 
 Suggested commit:
 
-- `SCRUM-11: create v2 event read APIs`
+- `GEOSYN-11: create v2 event read APIs`
 
-### `SCRUM-12`
+### `GEOSYN-12`
 
 Scope:
 
@@ -117,9 +117,9 @@ Relevant files:
 
 Suggested commit:
 
-- `SCRUM-12: dual-write clustering output into canonical events`
+- `GEOSYN-12: dual-write clustering output into canonical events`
 
-### `SCRUM-14`
+### `GEOSYN-14`
 
 Scope:
 
@@ -136,9 +136,9 @@ Relevant files:
 
 Suggested commit:
 
-- `SCRUM-14: add jira-aware git hooks and commit template`
+- `GEOSYN-14: add jira-aware git hooks and commit template`
 
-### `SCRUM-15`
+### `GEOSYN-15`
 
 Scope:
 
@@ -150,9 +150,9 @@ Relevant files:
 
 Suggested commit:
 
-- `SCRUM-15: add pull request template for jira-linked prs`
+- `GEOSYN-15: add pull request template for jira-linked prs`
 
-### `SCRUM-16`
+### `GEOSYN-16`
 
 Scope:
 
@@ -167,11 +167,11 @@ Relevant files:
 
 Suggested commit:
 
-- `SCRUM-16: document jira and github integration workflow`
+- `GEOSYN-16: document jira and github integration workflow`
 
 ## In Progress Work
 
-### `SCRUM-18`
+### `GEOSYN-18`
 
 Scope:
 
@@ -179,21 +179,21 @@ Scope:
 - customer-scoped alert generation
 - alert evidence and action endpoints
 
-### `SCRUM-19`
+### `GEOSYN-19`
 
 Scope:
 
 - supplier/facility CSV import
 - exposure import endpoint
 
-### `SCRUM-20`
+### `GEOSYN-20`
 
 Scope:
 
 - event-to-exposure explanation query
 - event exposure endpoint
 
-### `SCRUM-21`
+### `GEOSYN-21`
 
 Scope:
 

@@ -71,9 +71,9 @@ This repo includes optional Jira-aware git tooling so commits, branches, and PRs
 
 Recommended convention:
 
-- Branch: `SCRUM-123-short-description`
-- Commit: `SCRUM-123: short task description`
-- PR title: `SCRUM-123: short task description`
+- Branch: `GEOSYN-123-short-description`
+- Commit: `GEOSYN-123: short task description`
+- PR title: `GEOSYN-123: short task description`
 
 One-time local setup:
 

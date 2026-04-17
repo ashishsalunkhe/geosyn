@@ -27,25 +27,25 @@ This repo is configured for GitHub, so the recommended setup is:
 
 ## Recommended Company Convention
 
-Your Jira project appears to be `SCRUM`, so use keys like:
+Your Jira project is `GEOSYN`, so use keys like:
 
-- `SCRUM-101`
-- `SCRUM-245`
+- `GEOSYN-101`
+- `GEOSYN-245`
 
 ### Branch naming
 
 Use:
 
 ```text
-SCRUM-123-short-task-description
+GEOSYN-123-short-task-description
 ```
 
 Examples:
 
 ```text
-SCRUM-123-add-v2-event-service
-SCRUM-124-backfill-canonical-events
-SCRUM-125-add-jira-git-hooks
+GEOSYN-123-add-v2-event-service
+GEOSYN-124-backfill-canonical-events
+GEOSYN-125-add-jira-git-hooks
 ```
 
 ### Commit message format
@@ -53,15 +53,15 @@ SCRUM-125-add-jira-git-hooks
 Use:
 
 ```text
-SCRUM-123: short task description
+GEOSYN-123: short task description
 ```
 
 Examples:
 
 ```text
-SCRUM-123: add v2 event service
-SCRUM-124: backfill canonical events from legacy clusters
-SCRUM-125: add jira-aware git hooks and PR template
+GEOSYN-123: add v2 event service
+GEOSYN-124: backfill canonical events from legacy clusters
+GEOSYN-125: add jira-aware git hooks and PR template
 ```
 
 ### PR title format
@@ -69,7 +69,7 @@ SCRUM-125: add jira-aware git hooks and PR template
 Use:
 
 ```text
-SCRUM-123: short task description
+GEOSYN-123: short task description
 ```
 
 ## Smart Commit Examples
@@ -77,8 +77,8 @@ SCRUM-123: short task description
 If Smart Commits are enabled in Jira, you can also do things like:
 
 ```text
-SCRUM-123: add v2 event service #comment implemented service layer #time 1h 30m
-SCRUM-123: wire clustering into canonical events #transition "In Review"
+GEOSYN-123: add v2 event service #comment implemented service layer #time 1h 30m
+GEOSYN-123: wire clustering into canonical events #transition "In Review"
 ```
 
 Important notes:
@@ -114,8 +114,8 @@ That will:
 ### `prepare-commit-msg`
 
 - reads the current branch name
-- extracts a Jira issue key like `SCRUM-123`
-- prefixes the commit message with `SCRUM-123: ` if it is missing
+- extracts a Jira issue key like `GEOSYN-123`
+- prefixes the commit message with `GEOSYN-123: ` if it is missing
 
 ### `commit-msg`
 
@@ -143,7 +143,7 @@ Export your credentials first:
 export JIRA_BASE_URL="https://casehumana.atlassian.net"
 export JIRA_EMAIL="your-email@example.com"
 export JIRA_API_TOKEN="your-token"
-export JIRA_PROJECT_KEY="SCRUM"
+export JIRA_PROJECT_KEY="GEOSYN"
 ```
 
 Dry run first:

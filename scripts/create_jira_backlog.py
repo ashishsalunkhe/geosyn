@@ -8,7 +8,7 @@ Required environment variables:
     JIRA_API_TOKEN
 
 Optional environment variables:
-    JIRA_PROJECT_KEY=SCRUM
+    JIRA_PROJECT_KEY=GEOSYN
     JIRA_BACKLOG_DOC=docs/jira_backlog.md
 
 Examples:
@@ -267,7 +267,7 @@ def main() -> None:
     parser.add_argument("--output", default="docs/jira_created_map.json", help="Where to write created ticket mapping")
     args = parser.parse_args()
 
-    project_key = os.environ.get("JIRA_PROJECT_KEY", "SCRUM")
+    project_key = os.environ.get("JIRA_PROJECT_KEY", "GEOSYN")
     backlog_doc = Path(os.environ.get("JIRA_BACKLOG_DOC", "docs/jira_backlog.md"))
     tickets = parse_backlog(backlog_doc)
 

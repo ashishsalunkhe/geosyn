@@ -8,7 +8,7 @@ This backlog captures completed strategy, planning, and architecture tasks that 
 
 ### Ticket 1
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Author board memo for GeoSyn strategic repositioning`
 - Type: Task
 - Priority: Medium
@@ -21,7 +21,7 @@ This backlog captures completed strategy, planning, and architecture tasks that 
 
 ### Ticket 2
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Rewrite pitch narrative around exposure-aware intelligence`
 - Type: Task
 - Priority: Medium
@@ -34,7 +34,7 @@ This backlog captures completed strategy, planning, and architecture tasks that 
 
 ### Ticket 3
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Draft 90-day execution plan for GeoSyn v2`
 - Type: Task
 - Priority: Medium
@@ -47,7 +47,7 @@ This backlog captures completed strategy, planning, and architecture tasks that 
 
 ### Ticket 4
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Draft architecture blueprint and PostgreSQL schema proposal`
 - Type: Task
 - Priority: Medium

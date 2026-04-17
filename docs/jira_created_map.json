@@ -1,105 +1,105 @@
 {
-  "project_key": "SCRUM",
+  "project_key": "GEOSYN",
   "epics": {
-    "GeoSyn V2 Architecture Foundation": "SCRUM-5",
-    "Jira And Developer Workflow Automation": "SCRUM-13",
-    "Next V2 Product Slice": "SCRUM-17"
+    "GeoSyn V2 Architecture Foundation": "GEOSYN-5",
+    "Jira And Developer Workflow Automation": "GEOSYN-13",
+    "Next V2 Product Slice": "GEOSYN-17"
   },
   "tickets": [
     {
       "ordinal": 1,
-      "key": "SCRUM-6",
+      "key": "GEOSYN-6",
       "title": "Establish Alembic migration workflow for GeoSyn backend",
       "issue_type": "Story",
       "epic": "GeoSyn V2 Architecture Foundation"
     },
     {
       "ordinal": 2,
-      "key": "SCRUM-7",
+      "key": "GEOSYN-7",
       "title": "Add canonical v2 event models to backend",
       "issue_type": "Story",
       "epic": "GeoSyn V2 Architecture Foundation"
     },
     {
       "ordinal": 3,
-      "key": "SCRUM-8",
+      "key": "GEOSYN-8",
       "title": "Backfill legacy event clusters into canonical v2 events",
       "issue_type": "Task",
       "epic": "GeoSyn V2 Architecture Foundation"
     },
     {
       "ordinal": 4,
-      "key": "SCRUM-9",
+      "key": "GEOSYN-9",
       "title": "Introduce customer and watchlist foundation for v2 workflows",
       "issue_type": "Story",
       "epic": "GeoSyn V2 Architecture Foundation"
     },
     {
       "ordinal": 5,
-      "key": "SCRUM-10",
+      "key": "GEOSYN-10",
       "title": "Add exposure link foundation to backend",
       "issue_type": "Story",
       "epic": "GeoSyn V2 Architecture Foundation"
     },
     {
       "ordinal": 6,
-      "key": "SCRUM-11",
+      "key": "GEOSYN-11",
       "title": "Create EventServiceV2 and canonical event read APIs",
       "issue_type": "Story",
       "epic": "GeoSyn V2 Architecture Foundation"
     },
     {
       "ordinal": 7,
-      "key": "SCRUM-12",
+      "key": "GEOSYN-12",
       "title": "Dual-write clustering output into canonical events",
       "issue_type": "Story",
       "epic": "GeoSyn V2 Architecture Foundation"
     },
     {
       "ordinal": 8,
-      "key": "SCRUM-14",
+      "key": "GEOSYN-14",
       "title": "Add Jira-aware git hooks and commit template",
       "issue_type": "Task",
       "epic": "Jira And Developer Workflow Automation"
     },
     {
       "ordinal": 9,
-      "key": "SCRUM-15",
+      "key": "GEOSYN-15",
       "title": "Add pull request template for Jira-linked PRs",
       "issue_type": "Task",
       "epic": "Jira And Developer Workflow Automation"
     },
     {
       "ordinal": 10,
-      "key": "SCRUM-16",
+      "key": "GEOSYN-16",
       "title": "Document Jira + GitHub integration workflow for GeoSyn",
       "issue_type": "Task",
       "epic": "Jira And Developer Workflow Automation"
     },
     {
       "ordinal": 11,
-      "key": "SCRUM-18",
+      "key": "GEOSYN-18",
       "title": "Add v2 alert models and customer-scoped alert generation",
       "issue_type": "Story",
       "epic": "Next V2 Product Slice"
     },
     {
       "ordinal": 12,
-      "key": "SCRUM-19",
+      "key": "GEOSYN-19",
       "title": "Add exposure import path for suppliers and facilities",
       "issue_type": "Story",
       "epic": "Next V2 Product Slice"
     },
     {
       "ordinal": 13,
-      "key": "SCRUM-20",
+      "key": "GEOSYN-20",
       "title": "Implement event-to-exposure explanation query",
       "issue_type": "Story",
       "epic": "Next V2 Product Slice"
     },
     {
       "ordinal": 14,
-      "key": "SCRUM-21",
+      "key": "GEOSYN-21",
       "title": "Add v2 alert center endpoints for frontend transition",
       "issue_type": "Story",
       "epic": "Next V2 Product Slice"

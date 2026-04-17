@@ -10,7 +10,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 1
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Establish Alembic migration workflow for GeoSyn backend`
 - Type: Story
 - Priority: High
@@ -24,7 +24,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 2
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Add canonical v2 event models to backend`
 - Type: Story
 - Priority: High
@@ -37,7 +37,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 3
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Backfill legacy event clusters into canonical v2 events`
 - Type: Task
 - Priority: High
@@ -51,7 +51,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 4
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Introduce customer and watchlist foundation for v2 workflows`
 - Type: Story
 - Priority: High
@@ -65,7 +65,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 5
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Add exposure link foundation to backend`
 - Type: Story
 - Priority: High
@@ -78,7 +78,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 6
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Create EventServiceV2 and canonical event read APIs`
 - Type: Story
 - Priority: High
@@ -92,7 +92,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 7
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Dual-write clustering output into canonical events`
 - Type: Story
 - Priority: High
@@ -107,7 +107,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 8
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Add Jira-aware git hooks and commit template`
 - Type: Task
 - Priority: Medium
@@ -121,7 +121,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 9
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Add pull request template for Jira-linked PRs`
 - Type: Task
 - Priority: Medium
@@ -133,7 +133,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 10
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Document Jira + GitHub integration workflow for GeoSyn`
 - Type: Task
 - Priority: Medium
@@ -148,7 +148,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 11
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Add v2 alert models and customer-scoped alert generation`
 - Type: Story
 - Priority: High
@@ -161,7 +161,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 12
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Add exposure import path for suppliers and facilities`
 - Type: Story
 - Priority: High
@@ -174,7 +174,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 13
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Implement event-to-exposure explanation query`
 - Type: Story
 - Priority: High
@@ -187,7 +187,7 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 ### Ticket 14
 
-- Key: `SCRUM-TBD`
+- Key: `GEOSYN-TBD`
 - Title: `Add v2 alert center endpoints for frontend transition`
 - Type: Story
 - Priority: Medium
@@ -210,12 +210,12 @@ The ticket key column is intentionally left as `TBD` until Jira creates the real
 
 Once Jira tickets exist, map commits like this:
 
-- `SCRUM-101: establish alembic migration workflow`
-- `SCRUM-102: add canonical v2 event models`
-- `SCRUM-103: backfill legacy clusters into canonical events`
-- `SCRUM-104: add customer and watchlist foundation`
-- `SCRUM-105: dual-write clustering into canonical events`
-- `SCRUM-106: add jira-aware git hooks and commit template`
+- `GEOSYN-101: establish alembic migration workflow`
+- `GEOSYN-102: add canonical v2 event models`
+- `GEOSYN-103: backfill legacy clusters into canonical events`
+- `GEOSYN-104: add customer and watchlist foundation`
+- `GEOSYN-105: dual-write clustering into canonical events`
+- `GEOSYN-106: add jira-aware git hooks and commit template`
 
 ## Recommendation
 
