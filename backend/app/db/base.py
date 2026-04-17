@@ -6,3 +6,4 @@ Base = declarative_base()
 import app.models.domain  # noqa
 import app.models.brief_archive # noqa
 import app.models.strategic_scenario # noqa
+import app.models.v2  # noqa
