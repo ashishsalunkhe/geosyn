@@ -2,8 +2,8 @@ from sqlalchemy.orm import Session
 from datetime import timedelta
 from typing import List, Optional
 from app.models.domain import Document, EventCluster
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from app.services.embedding_service import embedding_service
+from app.services.event_service_v2 import EventServiceV2
 import numpy as np
 
 from app.pipelines.normalization import NormalizationPipeline
@@ -13,6 +13,7 @@ class ClusteringService:
         self.db = db
         self.pipeline = NormalizationPipeline()
         self.time_window = timedelta(hours=48)
+        self.event_service_v2 = EventServiceV2(db)
 
     def run_clustering(self) -> List[EventCluster]:
         """
@@ -34,11 +35,13 @@ class ClusteringService:
             
             if best_cluster:
                 doc.event_cluster_id = best_cluster.id
+                self.event_service_v2.sync_document_to_cluster_event(doc, best_cluster)
             else:
                 # 3. Create a new cluster if no match found
                 new_cluster = self._create_cluster(doc, themes)
                 doc.event_cluster_id = new_cluster.id
-        
+                self.event_service_v2.sync_document_to_cluster_event(doc, new_cluster)
+
         self.db.commit()
         return self.db.query(EventCluster).all()
 
@@ -46,8 +49,8 @@ class ClusteringService:
 
     def _find_best_cluster(self, doc: Document, themes: List[str]) -> Optional[EventCluster]:
         """
-        Finds the most computationally relevant existing cluster using ML vectorization.
-        Criteria: Time window + TF-IDF Cosine Similarity over 0.25 (threshold).
+        Finds the most computationally relevant existing cluster using local Semantic Embeddings.
+        Criteria: Time window + Semantic Similarity over 0.65 (threshold).
         """
         start_time = doc.published_at - self.time_window
         end_time = doc.published_at + self.time_window
@@ -60,40 +63,31 @@ class ClusteringService:
         if not candidates:
             return None
             
-        # Target representation
-        target_str = (doc.title + " " + doc.content + " " + " ".join(themes)).lower()
+        # 1. Target representation: Title + SNIPPET + Themes
+        target_str = f"{doc.title} {doc.content[:300]} {' '.join(themes)}".lower()
+        target_embedding = embedding_service.embed_text(target_str)
         
-        # Build Corpus of Candidates
-        corpus = []
+        # 2. Build Cluster representations
+        best_candidate = None
+        max_similarity = 0
+        
         for cluster in candidates:
-            corpus.append((cluster.title + " " + cluster.description + " " + (cluster.summary or "")).lower())
+            # We use the title and summary for semantic matching
+            cluster_str = f"{cluster.title} {cluster.summary or ''}".lower()
+            cluster_embedding = embedding_service.embed_text(cluster_str)
             
-        # We append the target document to the end of the corpus structure to share vector space
-        corpus.append(target_str)
-        
-        # Vectorize using Term-Frequency Inverse-Document-Frequency
-        try:
-            vectorizer = TfidfVectorizer(stop_words='english')
-            tfidf_matrix = vectorizer.fit_transform(corpus)
+            similarity = embedding_service.compute_similarity(target_embedding, cluster_embedding)
             
-            # Compute Cosine Similarity between our target string (the last matrix row)
-            # and all other preceding rows (the candidates)
-            target_vector = tfidf_matrix[-1]
-            candidate_vectors = tfidf_matrix[:-1]
+            if similarity > max_similarity:
+                max_similarity = similarity
+                best_candidate = cluster
+
+        # 3. Threshold check (Semantic similarity is usually higher than TF-IDF)
+        # 0.65 is a standard 'high confidence' match for miniLM models
+        if max_similarity > 0.65:
+            return best_candidate
             
-            similarities = cosine_similarity(target_vector, candidate_vectors)[0]
-            
-            # Identify max scoring mathematical match
-            max_index = np.argmax(similarities)
-            max_score = similarities[max_index]
-            
-            # Require a mathematical threshold match (> 15% similarity)
-            if max_score > 0.15:
-                return candidates[max_index]
-            return None
-        except Exception as e:
-            print(f"ML Clustering computation error: {e}")
-            return None
+        return None
 
     def _create_cluster(self, doc: Document, themes: List[str]) -> EventCluster:
         """

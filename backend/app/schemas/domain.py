@@ -114,3 +114,85 @@ class MarketSeries(MarketSeriesBase):
 
     class Config:
         from_attributes = True
+
+
+class EventV2Document(BaseModel):
+    id: int
+    title: str
+    url: Optional[str] = None
+    published_at: Optional[datetime] = None
+    source_id: int
+    is_primary: bool = False
+
+
+class EventV2Entity(BaseModel):
+    id: str
+    canonical_name: str
+    display_name: Optional[str] = None
+    entity_type: str
+    event_role: Optional[str] = None
+
+
+class EventV2WatchlistMatch(BaseModel):
+    watchlist_id: str
+    entity_id: Optional[str] = None
+    item_type: str
+    criticality_score: Optional[float] = None
+
+
+class EventV2ExposureMatch(BaseModel):
+    id: str
+    source_object_type: str
+    source_object_id: str
+    relationship_type: str
+    criticality_score: Optional[float] = None
+    exposure_weight: Optional[float] = None
+    confidence_score: Optional[float] = None
+
+
+class EventV2Summary(BaseModel):
+    id: str
+    canonical_title: str
+    event_type: Optional[str] = None
+    event_subtype: Optional[str] = None
+    status: str
+    first_seen_at: Optional[datetime] = None
+    last_seen_at: Optional[datetime] = None
+    severity_score: Optional[float] = None
+    confidence_score: Optional[float] = None
+    summary_text: Optional[str] = None
+    document_count: int = 0
+    entity_count: int = 0
+    matched_watchlists: List[EventV2WatchlistMatch] = Field(default_factory=list)
+    exposure_matches: List[EventV2ExposureMatch] = Field(default_factory=list)
+
+
+class EventV2Detail(EventV2Summary):
+    documents: List[EventV2Document] = Field(default_factory=list)
+    entities: List[EventV2Entity] = Field(default_factory=list)
+    exposure_summary: Optional[str] = None
+
+
+class AlertV2Summary(BaseModel):
+    id: str
+    event_id: str
+    alert_type: str
+    severity: str
+    status: str
+    headline: str
+    summary_text: Optional[str] = None
+    recommended_action: Optional[str] = None
+    triggered_at: datetime
+
+
+class AlertV2Detail(AlertV2Summary):
+    resolved_at: Optional[datetime] = None
+
+
+class AlertV2Evidence(BaseModel):
+    document_id: int
+    title: str
+    url: Optional[str] = None
+    published_at: Optional[datetime] = None
+    evidence_type: Optional[str] = None
+    relevance_score: Optional[float] = None
