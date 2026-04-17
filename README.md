@@ -64,3 +64,21 @@ If you prefer to use PostgreSQL instead of SQLite:
 - **Mapping**: Automated event clustering based on time and theme.
 - **Veracity**: Narrative claim extraction and automated fact-checking.
 - **Markets**: Real-time correlation between geopolitical "shocks" and asset volatility.
+
+## Jira Workflow
+
+This repo includes optional Jira-aware git tooling so commits, branches, and PRs can link cleanly to Jira work items.
+
+Recommended convention:
+
+- Branch: `SCRUM-123-short-description`
+- Commit: `SCRUM-123: short task description`
+- PR title: `SCRUM-123: short task description`
+
+One-time local setup:
+
+```bash
+bash scripts/setup_jira_git_workflow.sh
+```
+
+See [docs/jira_setup.md](docs/jira_setup.md) and [docs/jira_backlog.md](docs/jira_backlog.md) for details.

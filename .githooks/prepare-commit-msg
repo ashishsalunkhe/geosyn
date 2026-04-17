@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MSG_FILE="${1:-}"
+COMMIT_SOURCE="${2:-}"
+
+if [[ -z "${MSG_FILE}" || ! -f "${MSG_FILE}" ]]; then
+  exit 0
+fi
+
+if [[ "${COMMIT_SOURCE}" == "merge" || "${COMMIT_SOURCE}" == "squash" ]]; then
+  exit 0
+fi
+
+BRANCH_NAME="$(git symbolic-ref --quiet --short HEAD 2>/dev/null || true)"
+if [[ -z "${BRANCH_NAME}" ]]; then
+  exit 0
+fi
+
+ISSUE_KEY="$(printf '%s' "${BRANCH_NAME}" | grep -oE '[A-Z][A-Z0-9]+-[0-9]+' | head -n 1 || true)"
+if [[ -z "${ISSUE_KEY}" ]]; then
+  exit 0
+fi
+
+FIRST_LINE="$(head -n 1 "${MSG_FILE}" || true)"
+if printf '%s' "${FIRST_LINE}" | grep -qE '[A-Z][A-Z0-9]+-[0-9]+'; then
+  exit 0
+fi
+
+TMP_FILE="$(mktemp)"
+{
+  printf '%s: %s\n' "${ISSUE_KEY}" "${FIRST_LINE}"
+  tail -n +2 "${MSG_FILE}" 2>/dev/null || true
+} > "${TMP_FILE}"
+mv "${TMP_FILE}" "${MSG_FILE}"

@@ -1,0 +1,6 @@
+SCRUM-123: short task description
+
+# Optional Smart Commit examples:
+# SCRUM-123: short task description #comment implemented core change
+# SCRUM-123: short task description #time 1h 30m
+# SCRUM-123: short task description #transition "In Review"
