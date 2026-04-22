@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-21T10:21:15.531791",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.cnbc.com/2026/04/21/kevin-warshs-senate-hearing-what-to-expect.html",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.cnbc.com/2026/04/21/kevin-warshs-senate-hearing-what-to-expect.html",
+    "title": "Here's what to expect from Fed chair nominee Kevin Warsh's Senate hearing Tuesday",
+    "content": "In a much-anticipated hearing before the Banking Committee, the former Fed governor will face questioning over a variety of subjects",
+    "url": "https://www.cnbc.com/2026/04/21/kevin-warshs-senate-hearing-what-to-expect.html",
+    "source": "FINANCE",
+    "seendate": "2026-04-21T11:00:57Z",
+    "tone": -3.5,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

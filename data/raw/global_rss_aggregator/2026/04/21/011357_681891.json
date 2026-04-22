@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-21T01:13:57.681891",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/crm1rg3ydkvo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/crm1rg3ydkvo?at_medium=RSS&at_campaign=rss",
+    "title": "Canadian killed in shooting at Mexico's ancient Teotihuac\u00e1n pyramids",
+    "content": "Several people were also injured in the incident on Monday at the popular tourist site, say Mexican officials.",
+    "url": "https://www.bbc.com/news/articles/crm1rg3ydkvo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-21T00:22:17Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

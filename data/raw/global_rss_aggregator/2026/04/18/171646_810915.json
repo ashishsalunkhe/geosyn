@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-18T17:16:46.810915",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/videos/ckgepkp3zgjo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/videos/ckgepkp3zgjo?at_medium=RSS&at_campaign=rss",
+    "title": "What does it take to survive in the Arctic? These rangers have an idea",
+    "content": "The BBC spent time with the Canadian military in the country's northernmost region - this is what they taught us about dealing with extreme conditions.",
+    "url": "https://www.bbc.com/news/videos/ckgepkp3zgjo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-18T00:01:43Z",
+    "tone": 3.5,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

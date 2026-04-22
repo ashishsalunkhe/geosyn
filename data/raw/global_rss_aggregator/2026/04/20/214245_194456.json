@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-20T21:42:45.194456",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.cnbc.com/2026/04/20/stocks-making-the-biggest-moves-after-hours-amzn-aapl-stld.html",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.cnbc.com/2026/04/20/stocks-making-the-biggest-moves-after-hours-amzn-aapl-stld.html",
+    "title": "Stocks making the biggest moves after hours: Amazon, Apple, Steel Dynamics and more",
+    "content": "See which stocks are posting big moves after the bell.",
+    "url": "https://www.cnbc.com/2026/04/20/stocks-making-the-biggest-moves-after-hours-amzn-aapl-stld.html",
+    "source": "FINANCE",
+    "seendate": "2026-04-20T22:06:56Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

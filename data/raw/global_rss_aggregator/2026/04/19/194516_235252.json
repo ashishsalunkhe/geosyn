@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-19T19:45:16.235252",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/c8ejn778j4do?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/c8ejn778j4do?at_medium=RSS&at_campaign=rss",
+    "title": "Ukraine police chief resigns after officers allegedly fled deadly shooting",
+    "content": "Authorities say the officers have been suspended and an investigation into their actions is under way.",
+    "url": "https://www.bbc.com/news/articles/c8ejn778j4do?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-19T18:48:41Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

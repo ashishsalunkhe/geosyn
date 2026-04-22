@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-19T06:06:55.406947",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cj60pl5g4z4o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cj60pl5g4z4o?at_medium=RSS&at_campaign=rss",
+    "title": "Scammers are becoming ever more sophisticated - this is what the fightback looks like",
+    "content": "Scams have exploded over the last few years. Can countries and companies come together to turn the tables on the scammers?",
+    "url": "https://www.bbc.com/news/articles/cj60pl5g4z4o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-19T00:02:48Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

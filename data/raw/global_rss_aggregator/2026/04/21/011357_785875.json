@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-21T01:13:57.785875",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cj0v36vell4o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cj0v36vell4o?at_medium=RSS&at_campaign=rss",
+    "title": "Woman and child jumped off roof to escape deadly Louisiana shooting",
+    "content": "Authorities say a father fatally shot eight children, including seven of his own, in what appears to be a \"domestic dispute\".",
+    "url": "https://www.bbc.com/news/articles/cj0v36vell4o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-20T21:19:57Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

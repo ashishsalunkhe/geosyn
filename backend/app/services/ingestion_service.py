@@ -13,12 +13,15 @@ from app.ingestion.osint_provider import OSINTProvider
 from app.ingestion.imf_provider import IMFProvider
 from app.ingestion.world_bank_provider import WorldBankProvider
 from app.ingestion.fred_provider import FREDProvider
+from app.ingestion.sanctions_provider import SanctionsProvider
+from app.services.provenance_service_v2 import ProvenanceServiceV2
 
 class IngestionService:
     def __init__(self, db: Session):
         self.db = db
         self.pipeline = NormalizationPipeline()
         self.osint_provider = OSINTProvider()
+        self.provenance_service = ProvenanceServiceV2(db)
 
     def run_osint_sync(self, query: str = "") -> List[Document]:
         """
@@ -48,6 +51,17 @@ class IngestionService:
                 raw_data=raw
             )
             self.db.add(new_doc)
+            self.db.flush()
+            raw_payload_ref = self.provenance_service.store_raw_payload(
+                source.name,
+                raw,
+                metadata={"external_id": raw.get("external_id"), "provider": "osint"},
+            )
+            self.provenance_service.ensure_evidence_document(
+                new_doc,
+                raw_payload_ref=raw_payload_ref,
+                source_confidence=source.reliability_score,
+            )
             ingested.append(new_doc)
             
         self.db.commit()
@@ -153,6 +167,13 @@ class IngestionService:
         
         self.db.commit()
 
+    async def ingest_compliance_signals(self, query: str = "") -> List[Document]:
+        """
+        Sync official compliance and sanctions-style feeds.
+        """
+        provider = SanctionsProvider()
+        return self.run_ingestion(provider, query=query or None)
+
     def run_ingestion(self, provider: BaseProvider, query: str = None) -> List[Document]:
         """
         Coordinates the ingestion process for a specific provider.
@@ -190,6 +211,16 @@ class IngestionService:
             new_doc = Document(**doc_data.dict())
             self.db.add(new_doc)
             self.db.flush() # Get ID
+            raw_payload_ref = self.provenance_service.store_raw_payload(
+                source.name,
+                raw,
+                metadata={"external_id": raw.get("id"), "provider": provider.provider_name},
+            )
+            self.provenance_service.ensure_evidence_document(
+                new_doc,
+                raw_payload_ref=raw_payload_ref,
+                source_confidence=source.reliability_score,
+            )
 
             # 5. Extract and Link Entities
             raw_content = doc_data.content or ""
@@ -210,6 +241,12 @@ class IngestionService:
                 # Link to document
                 if entity not in new_doc.entities:
                     new_doc.entities.append(entity)
+
+            self.provenance_service.ensure_evidence_document(
+                new_doc,
+                raw_payload_ref=raw_payload_ref,
+                source_confidence=source.reliability_score,
+            )
             
             ingested_docs.append(new_doc)
         

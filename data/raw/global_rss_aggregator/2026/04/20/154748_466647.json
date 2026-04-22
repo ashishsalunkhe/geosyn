@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-20T15:47:48.466647",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cpd575n1znzo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cpd575n1znzo?at_medium=RSS&at_campaign=rss",
+    "title": "Outrage over Israeli soldier's vandalism of Jesus statue in Lebanon",
+    "content": "The Israeli military says it views with \"great severity\" the actions of the soldier, as the US ambassador demands \"swift\" consequences.",
+    "url": "https://www.bbc.com/news/articles/cpd575n1znzo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-20T15:28:55Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

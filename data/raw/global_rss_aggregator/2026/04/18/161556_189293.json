@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-18T16:15:56.189293",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cyv10e1d13po?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cyv10e1d13po?at_medium=RSS&at_campaign=rss",
+    "title": "White House and Anthropic hold 'productive' meeting amid fears over Mythos model",
+    "content": "The discussion is a sign the AI firm's technology may be too critical for even the US government to do without.",
+    "url": "https://www.bbc.com/news/articles/cyv10e1d13po?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-18T01:37:06Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

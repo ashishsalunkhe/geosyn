@@ -34,6 +34,7 @@ async def proactive_polling_loop():
                 if loop_counter % 2 == 0:
                     print(f"GeoSyn: [Anchor] Initiating Institutional Macro Sync... (IMF, WB, Labor, GDP)")
                     await ingestion_service.ingest_institutional_macro()
+                    await ingestion_service.ingest_compliance_signals()
                     
                     # 3. Tactical Divergence Analysis (Surprise Detection)
                     divergence_service = DivergenceService(db)

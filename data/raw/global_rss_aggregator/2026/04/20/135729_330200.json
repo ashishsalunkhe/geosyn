@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-20T13:57:29.330200",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.cnbc.com/2026/04/20/ast-falls-after-bezos-blue-origin-places-satellite-in-wrong-orbit.html",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.cnbc.com/2026/04/20/ast-falls-after-bezos-blue-origin-places-satellite-in-wrong-orbit.html",
+    "title": "AST SpaceMobile shares drop after its satellite is placed in wrong orbit by Bezos' Blue Origin",
+    "content": "Blue Origin acknowledged the satellite was placed in the wrong orbit, but has not commented since it was deemed lost.",
+    "url": "https://www.cnbc.com/2026/04/20/ast-falls-after-bezos-blue-origin-places-satellite-in-wrong-orbit.html",
+    "source": "FINANCE",
+    "seendate": "2026-04-20T13:22:26Z",
+    "tone": -3.5,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

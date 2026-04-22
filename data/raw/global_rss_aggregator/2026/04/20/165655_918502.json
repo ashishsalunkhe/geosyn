@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-20T16:56:55.918502",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cy7144jr68lo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cy7144jr68lo?at_medium=RSS&at_campaign=rss",
+    "title": "More than 200 rescued from IS-linked group in DR Congo",
+    "content": "The youngest of those freed from an Allied Democratic Forces camp is a girl aged just 14, Uganda's army says.",
+    "url": "https://www.bbc.com/news/articles/cy7144jr68lo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-20T17:25:12Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

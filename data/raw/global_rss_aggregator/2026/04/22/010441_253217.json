@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-22T01:04:41.253217",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cz78zj74548o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cz78zj74548o?at_medium=RSS&at_campaign=rss",
+    "title": "Why police are seeking to arrest billionaire K-pop mogul behind BTS",
+    "content": "Bang Si-hyuk, who created the supergroup, denies defrauding investors before his $7.3bn company went public.",
+    "url": "https://www.bbc.com/news/articles/cz78zj74548o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-21T23:28:21Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

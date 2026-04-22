@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-20T15:47:48.470741",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/c0krm128mgyo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/c0krm128mgyo?at_medium=RSS&at_campaign=rss",
+    "title": "Nigerian wins global prize for trying to save bats in a country that shuns them",
+    "content": "Many Nigerians associate bats with witchcraft but that did not deter ecologist Iroro Tanshi.",
+    "url": "https://www.bbc.com/news/articles/c0krm128mgyo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-20T14:10:38Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

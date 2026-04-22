@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-19T12:44:26.293060",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cvg07lq5ql4o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cvg07lq5ql4o?at_medium=RSS&at_campaign=rss",
+    "title": "Rat poison found in HiPP baby food jar in Austria, police say",
+    "content": "The band warned on Saturday that consuming the pur\u00e9es many be potentially \"life-threatening\".",
+    "url": "https://www.bbc.com/news/articles/cvg07lq5ql4o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-19T12:20:21Z",
+    "tone": -3.5,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

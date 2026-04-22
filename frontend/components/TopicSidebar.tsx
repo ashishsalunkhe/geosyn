@@ -110,7 +110,7 @@ export default function TacticalSidebar({
   });
 
   return (
-    <div className="flex flex-col h-full bg-panel-bg p-4 gap-6 select-none border-r border-border overflow-y-auto custom-scrollbar transition-colors">
+    <div className="flex h-full flex-col gap-6 overflow-y-auto border-r border-border bg-panel-bg p-4 select-none transition-colors custom-scrollbar">
 
       {/* My Watchlist — quick-glance of tracked scenarios */}
       <section className="space-y-1">
@@ -143,13 +143,13 @@ export default function TacticalSidebar({
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.04 }}
                   onClick={() => onSelectScenario(s.topic)}
-                  className="w-full text-left px-3 py-2.5 rounded-2xl border border-transparent hover:bg-secondary hover:border-border transition-all group flex items-center gap-2.5"
+                  className="group flex w-full items-center gap-2.5 rounded-2xl border border-transparent px-3 py-2.5 text-left transition-all hover:border-border hover:bg-secondary"
                 >
                   <div className={`p-1.5 rounded-xl border ${cfg.bg} shrink-0`}>
                     <Icon size={10} className={cfg.color} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-black text-foreground group-hover:text-primary transition-colors truncate uppercase italic leading-tight">
+                    <p className="truncate text-[10px] font-black uppercase italic leading-tight text-foreground transition-colors group-hover:text-primary">
                       {s.topic}
                     </p>
                     <p className={`text-[7px] font-black uppercase tracking-widest ${cfg.color} mt-0.5`}>
@@ -189,9 +189,9 @@ export default function TacticalSidebar({
             <div key={category.id} className="mb-1">
               <button
                 onClick={() => toggleExpand(category.id)}
-                className="w-full flex items-center justify-between px-3 py-2.5 text-[10px] font-black text-foreground hover:text-primary transition-colors rounded-xl hover:bg-secondary"
+                className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-[10px] font-black text-foreground transition-colors hover:bg-secondary hover:text-primary"
               >
-                <div className="flex items-center gap-2 uppercase tracking-widest">
+                <div className="flex min-w-0 items-center gap-2 uppercase tracking-widest">
                   <category.icon
                     size={12}
                     className={
@@ -200,7 +200,7 @@ export default function TacticalSidebar({
                         : "text-text-muted/40"
                     }
                   />
-                  {category.label}
+                  <span className="truncate">{category.label}</span>
                 </div>
                 {expanded.includes(category.id) ? (
                   <ChevronDown size={11} />
@@ -226,13 +226,13 @@ export default function TacticalSidebar({
                           onClick={() =>
                             onFilterChange(activeRegion, child.id)
                           }
-                          className={`w-full text-left px-4 py-1.5 text-[8px] font-bold uppercase tracking-widest transition-all flex items-center justify-between group ${
+                          className={`group flex w-full items-center justify-between gap-2 px-4 py-1.5 text-left text-[8px] font-bold uppercase tracking-widest transition-all ${
                             isActive
                               ? "text-primary"
                               : "text-text-muted/60 hover:text-foreground"
                           }`}
                         >
-                          <div className="flex items-center gap-2">
+                          <div className="flex min-w-0 items-center gap-2">
                             <div
                               className={`w-1 h-1 rounded-full shrink-0 ${
                                 isActive
@@ -240,7 +240,7 @@ export default function TacticalSidebar({
                                   : "bg-border group-hover:bg-text-muted"
                               }`}
                             />
-                            {child.label}
+                            <span className="truncate">{child.label}</span>
                           </div>
                           {count > 0 && (
                             <span
@@ -280,13 +280,13 @@ export default function TacticalSidebar({
               <button
                 key={reg.id}
                 onClick={() => onFilterChange(reg.id, activeSector)}
-                className={`w-full text-left px-3 py-2.5 rounded-2xl text-[9px] font-black tracking-widest transition-all flex items-center justify-between group ${
+                className={`group flex w-full items-center justify-between gap-2 rounded-2xl px-3 py-2.5 text-left text-[9px] font-black tracking-widest transition-all ${
                   isActive
                     ? "bg-secondary text-primary border border-border shadow-sm"
                     : "text-text-muted hover:bg-secondary hover:text-foreground border border-transparent"
                 }`}
               >
-                <div className="flex items-center gap-2.5">
+                <div className="flex min-w-0 items-center gap-2.5">
                   <Globe
                     size={12}
                     className={
@@ -295,7 +295,7 @@ export default function TacticalSidebar({
                         : "text-text-muted/40 group-hover:text-primary"
                     }
                   />
-                  <span className="uppercase truncate">{reg.label}</span>
+                  <span className="truncate uppercase">{reg.label}</span>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
                   {count > 0 && (

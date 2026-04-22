@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-21T10:05:31.184886",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cn784g76v63o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cn784g76v63o?at_medium=RSS&at_campaign=rss",
+    "title": "South Africa's police boss charged in connection with controversial health contract",
+    "content": "Fannie Masemola is accused of failing in his duties to provide proper oversight in his role.",
+    "url": "https://www.bbc.com/news/articles/cn784g76v63o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-21T10:42:46Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

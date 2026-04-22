@@ -1,0 +1,14 @@
+{
+  "ingested_at": "2026-04-18T18:17:52.790994",
+  "source": "worldbank",
+  "metadata": {
+    "indicator_code": "TX.VAL.FUEL.ZS.UN"
+  },
+  "data": {
+    "value": 10.6912316954314,
+    "series": "TX.VAL.FUEL.ZS.UN",
+    "economy": "WLD",
+    "aggregate": true,
+    "time": "YR2024"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-18T16:15:56.174999",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cqj81g5dxkyo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cqj81g5dxkyo?at_medium=RSS&at_campaign=rss",
+    "title": "Millions listen to Ethiopian star's song taking swipe at government",
+    "content": "The country's biggest musician Teddy Afro laments a lack of unity in the country on his new track.",
+    "url": "https://www.bbc.com/news/articles/cqj81g5dxkyo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-18T14:13:21Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-20T10:06:28.480166",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/c4g833128vlo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/c4g833128vlo?at_medium=RSS&at_campaign=rss",
+    "title": "India has splurged billions on metro trains. But where are the commuters?",
+    "content": "Without better last-mile connectivity and affordable fares, metro use is unlikely to improve quickly, say experts.",
+    "url": "https://www.bbc.com/news/articles/c4g833128vlo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-20T00:12:10Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

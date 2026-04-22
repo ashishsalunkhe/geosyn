@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-19T23:27:44.603661",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cm2kgm1zpgro?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cm2kgm1zpgro?at_medium=RSS&at_campaign=rss",
+    "title": "Rumen Radev looks set to win Bulgarian Parliamentary election",
+    "content": "Exit polls put his Progressive Bulgaria on 37%, more than double the score of the closest runner-up, but he will likely need to form a coalition to govern.",
+    "url": "https://www.bbc.com/news/articles/cm2kgm1zpgro?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-19T23:06:39Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-19T16:48:03.119280",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/c4gxv3874vjo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/c4gxv3874vjo?at_medium=RSS&at_campaign=rss",
+    "title": "Thousands of Parisians evacuated as WW2 bomb detonated",
+    "content": "Residents within a 450m radius of the device were told to leave their homes while it was neutralised.",
+    "url": "https://www.bbc.com/news/articles/c4gxv3874vjo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-19T16:50:48Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

@@ -31,6 +31,7 @@ interface MarketLandscapeProps {
 }
 
 export default function MarketLandscape({ scenarios, trending, alerts = [], onSelect }: MarketLandscapeProps) {
+  const watchAlerts = alerts.filter((a) => a.alert_type === "event_exposure" || a.metadata?.top_exposure_match);
   return (
     <div className="space-y-16 animate-in fade-in duration-1000">
       
@@ -123,23 +124,22 @@ export default function MarketLandscape({ scenarios, trending, alerts = [], onSe
               </div>
             </div>
             <div className="text-[10px] font-black text-text-muted uppercase tracking-widest border border-border px-4 py-1.5 rounded-2xl bg-panel-bg shadow-sm">
-                {alerts.filter(a => a.type === 'volatility').length} Shocks Detected
+                {watchAlerts.length} Exposure Alerts
             </div>
         </div>
 
-        {alerts.filter(a => a.type === 'volatility' || a.ticker).length === 0 ? (
+        {watchAlerts.length === 0 ? (
           <div className="py-20 text-center glass-panel border-dashed border-border bg-panel-bg/40">
              <TrendingUp size={40} className="text-text-muted/20 mx-auto mb-4" />
              <p className="text-[10px] font-black text-text-muted uppercase tracking-widest italic">No significant market deviations detected.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {alerts
-              .filter(a => a.type === 'volatility' || a.ticker)
+            {watchAlerts
               .slice(0, 8)
               .map((alert, idx) => {
-                const diff = alert.alert_payload?.change_pct || 0;
-                const isPositive = diff > 0;
+                const topExposure = alert.metadata?.top_exposure_match;
+                const diff = topExposure?.exposure_weight || alert.metadata?.risk_score?.score_value || 0;
                 return (
                   <motion.div 
                     key={alert.id}
@@ -151,18 +151,18 @@ export default function MarketLandscape({ scenarios, trending, alerts = [], onSe
                     <div className="flex items-start justify-between mb-4">
                        <div className="flex flex-col">
                            <span className="text-[8px] font-black text-text-muted tracking-[0.2em] uppercase mb-1">
-                               {alert.ticker === 'GLOBAL' ? 'Macro' : 'Ticker'}
+                               {topExposure?.source_object_type || alert.alert_type}
                            </span>
                            <h4 className="text-[16px] font-black text-foreground italic uppercase tracking-tight leading-none group-hover:text-primary transition-colors">
-                               ${alert.ticker}
+                               {topExposure?.source_object_name || alert.headline}
                            </h4>
                        </div>
-                       <div className={`text-[12px] font-black px-2 py-1 rounded-lg border ${isPositive ? 'bg-success/10 text-success border-success/20' : 'bg-error/10 text-error border-error/20'}`}>
-                           {isPositive ? '+' : ''}{diff.toFixed(2)}%
+                       <div className={`text-[12px] font-black px-2 py-1 rounded-lg border ${alert.severity === 'critical' || alert.severity === 'high' ? 'bg-error/10 text-error border-error/20' : 'bg-success/10 text-success border-success/20'}`}>
+                           {(diff * 100).toFixed(0)}%
                        </div>
                     </div>
                     <p className="text-[9px] font-bold text-text-muted/80 leading-relaxed uppercase overflow-hidden line-clamp-3">
-                       {alert.content}
+                       {alert.summary_text || alert.recommended_action || "Mapped exposure alert ready for review."}
                     </p>
                   </motion.div>
                 );

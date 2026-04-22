@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-18T21:19:34.404599",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/clyx9xyy0j9o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/clyx9xyy0j9o?at_medium=RSS&at_campaign=rss",
+    "title": "All construction of Trump's White House ballroom can resume, appeals court says",
+    "content": "Construction is expected to continue at the White House until the next hearing which is due to take place in June.",
+    "url": "https://www.bbc.com/news/articles/clyx9xyy0j9o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-18T20:18:40Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

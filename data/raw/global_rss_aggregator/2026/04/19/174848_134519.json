@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-19T17:48:48.134519",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/c0q9v1p2dd2o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/c0q9v1p2dd2o?at_medium=RSS&at_campaign=rss",
+    "title": "Eight children killed in Louisiana shooting, police say",
+    "content": "The children, aged from one to 14 years old, were killed in a shooting in Shreveport, Louisiana, which police are describing as a \"domestic disturbance\".",
+    "url": "https://www.bbc.com/news/articles/c0q9v1p2dd2o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-19T18:36:38Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

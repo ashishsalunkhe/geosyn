@@ -51,6 +51,23 @@ def ingest_youtube(request: YouTubeIngestRequest, db: Session = Depends(get_db))
     }
 
 
+@router.post("/compliance")
+async def ingest_compliance(
+    db: Session = Depends(get_db),
+    query: str = "",
+):
+    """
+    Ingest compliance and sanctions-style official feed signals.
+    """
+    service = IngestionService(db)
+    docs = await service.ingest_compliance_signals(query=query)
+    return {
+        "status": "success",
+        "doc_count": len(docs),
+        "query": query,
+    }
+
+
 @router.post("/exposure/csv")
 async def import_exposure_csv(
     file: UploadFile = File(...),
@@ -61,6 +78,8 @@ async def import_exposure_csv(
     Import customer exposure links from a CSV file.
     Required columns:
     source_object_type, source_object_id, relationship_type, target_entity_name
+    Supported source_object_type values:
+    supplier, facility, port, route, commodity, customer_asset
     """
     raw = await file.read()
     try:

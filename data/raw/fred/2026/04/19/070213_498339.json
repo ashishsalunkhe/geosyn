@@ -1,0 +1,18 @@
+{
+  "ingested_at": "2026-04-19T07:02:13.498339",
+  "source": "fred",
+  "metadata": {
+    "external_id": "fred-PCE-2026-04-18",
+    "provider": "FRED"
+  },
+  "data": {
+    "id": "fred-PCE-2026-04-18",
+    "title": "Macro Signal: Consumption Expenditures (BEA)",
+    "content": "FRED reports Consumption Expenditures (BEA) at 100.0609 for period 2026-04-18.",
+    "url": "https://fred.stlouisfed.org/series/PCE",
+    "published_at": "2026-04-18",
+    "source": "FRED",
+    "raw_val": 100.0609,
+    "indicator_code": "PCE"
+  }
+}

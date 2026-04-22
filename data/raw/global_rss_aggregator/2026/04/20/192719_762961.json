@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-20T19:27:19.762961",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/crr1v4gzkvlo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/crr1v4gzkvlo?at_medium=RSS&at_campaign=rss",
+    "title": "US singer D4vd charged with murder stemming from death of missing teenage girl",
+    "content": "Prosecutors say he could face life in prison due to special circumstances surrounding the girl's disappearance and death.",
+    "url": "https://www.bbc.com/news/articles/crr1v4gzkvlo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-20T20:23:17Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

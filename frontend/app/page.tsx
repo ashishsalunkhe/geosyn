@@ -3,10 +3,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  fetchEvents, 
+  fetchEventsV2, 
   syncMarkets, 
-  fetchAlerts, 
-  clearAlerts, 
+  fetchAlertsV2, 
+  generateAlertsV2,
   fetchPortfolioSummary,
   followScenario,
   fetchIntelligenceComposite,
@@ -72,25 +72,25 @@ export default function Home() {
   const loadData = useCallback(async () => {
     try {
       const [evs, alrts, market, scens, trends, summary] = await Promise.all([
-        fetchEvents(),
-        fetchAlerts(),
+        fetchEventsV2(),
+        fetchAlertsV2(),
         fetchMarketCorrelation(selectedTicker),
         fetchScenarios(activeRegion, activeSector),
         fetchTrendingScenarios(),
         fetchPortfolioSummary()
       ]);
-      setEvents(evs);
-      setAlerts(alrts);
-      setMarketData(market);
-      setTrackedScenarios(scens);
-      setTrendingScenarios(trends);
-      setSummaryData(summary);
+      setEvents(evs as any[]);
+      setAlerts(alrts as any[]);
+      setMarketData(market as any);
+      setTrackedScenarios(scens as any[]);
+      setTrendingScenarios(trends as any[]);
+      setSummaryData(summary as any);
       
       const graph = await fetchNexusGraph();
-      setNexusData(graph);
+      setNexusData(graph as { nodes: any[]; links: any[] });
 
       const composite = await fetchIntelligenceComposite();
-      setCompositeData(composite);
+      setCompositeData(composite as any);
     } catch (err) {
       console.error(err);
     } finally {
@@ -101,7 +101,7 @@ export default function Home() {
   useEffect(() => {
     loadData();
     const interval = setInterval(() => {
-      fetchAlerts().then(setAlerts).catch(console.error);
+      fetchAlertsV2().then(setAlerts).catch(console.error);
     }, 60000);
 
     // Initialise Theme
@@ -143,7 +143,7 @@ export default function Home() {
       setActionBusy(true);
       await followScenario(activeTopic, activeRegion, activeSector);
       const scens = await fetchScenarios(activeRegion, activeSector);
-      setTrackedScenarios(scens);
+      setTrackedScenarios(scens as any[]);
     } catch (err) {
       console.error(err);
     } finally {
@@ -166,12 +166,13 @@ export default function Home() {
     try {
       setActionBusy(true);
       await syncMarkets();
+      await generateAlertsV2();
       await loadData();
     } catch (err) { console.error(err); } finally { setActionBusy(false); }
   };
 
   return (
-    <div className={`min-h-screen bg-background text-foreground font-sans antialiased flex transition-colors duration-500 ${theme}`}>
+    <div className={`min-h-screen bg-background text-foreground font-sans antialiased xl:flex transition-colors duration-500 ${theme}`}>
       
       {/* Topic Search & Filters */}
       <aside className="hidden xl:flex w-[280px] 2xl:w-[320px] h-screen flex-col sticky top-0 border-r border-border bg-panel-bg/40 backdrop-blur-3xl z-40 transition-all">
@@ -184,21 +185,22 @@ export default function Home() {
         />
       </aside>
 
-      <main className="flex-1 flex flex-col min-h-screen min-w-0 overflow-x-hidden">
+      <main className="flex min-h-screen min-w-0 flex-1 flex-col overflow-x-hidden">
         
         {/* Main Dashboard Header */}
-        <header className="px-4 py-3 md:px-6 md:py-4 lg:px-8 lg:py-5 border-b border-border bg-background/40 backdrop-blur-md sticky top-0 z-50">
-          <div className="max-w-[1400px] mx-auto flex items-center justify-between w-full gap-3">
-            <div className="flex items-center gap-4">
+        <header className="sticky top-0 z-50 border-b border-border bg-background/70 px-4 py-3 backdrop-blur-md md:px-6 md:py-4 lg:px-8 lg:py-5">
+          <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-3 md:gap-4">
+            <div className="flex min-w-0 items-center gap-3 md:gap-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-black">
                 <Shield size={22} />
               </div>
-              <h1 className="text-xl font-black tracking-tighter uppercase italic flex items-center gap-2 group cursor-pointer" onClick={() => handleAnalyzeTopic("")}>
-                GeoSyn <span className="text-primary">Intelligence</span>
+              <h1 className="flex min-w-0 items-center gap-2 text-base font-black uppercase italic tracking-tighter sm:text-xl group cursor-pointer" onClick={() => handleAnalyzeTopic("")}>
+                <span className="truncate">GeoSyn</span>
+                <span className="truncate text-primary">Intelligence</span>
               </h1>
             </div>
 
-            <nav className="flex items-center p-1 bg-panel-bg rounded-xl border border-border overflow-x-auto scrollbar-none">
+            <nav className="order-3 -mx-1 flex w-full items-center gap-1 overflow-x-auto rounded-xl border border-border bg-panel-bg p-1 scrollbar-none xl:order-none xl:mx-0 xl:w-auto">
               {[
                 { id: "brief", label: "Intel", icon: LayoutDashboard },
                 { id: "nexus", label: "Nexus", icon: GitBranch },
@@ -209,7 +211,7 @@ export default function Home() {
                 <button
                   key={item.id}
                   onClick={() => setActiveView(item.id as any)}
-                  className={`flex items-center gap-2.5 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                  className={`flex shrink-0 items-center gap-2 rounded-2xl px-3 py-2 text-[10px] font-black uppercase tracking-widest transition-all sm:px-4 xl:px-6 ${
                     activeView === item.id 
                       ? "bg-panel-bg text-primary border border-primary/20" 
                       : "text-text-muted hover:text-foreground hover:bg-foreground/5"
@@ -225,7 +227,7 @@ export default function Home() {
                    setActiveView("brief");
                    setActiveTopic("");
                  }}
-                 className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                 className={`flex shrink-0 items-center gap-2 rounded-2xl px-3 py-2 text-[10px] font-black uppercase tracking-widest transition-all sm:px-4 xl:px-6 ${
                    activeView === "brief" && !activeTopic ? "bg-panel-bg text-primary border border-primary/20" : "text-text-muted hover:text-foreground"
                  }`}
                >
@@ -234,7 +236,7 @@ export default function Home() {
                </button>
             </nav>
 
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex shrink-0 items-center gap-2 self-start sm:self-auto">
                <button 
                   onClick={handleFullSync}
                   disabled={actionBusy}
@@ -255,7 +257,7 @@ export default function Home() {
           </div>
         </header>
 
-        <div className="p-4 md:p-6 xl:p-8 max-w-[1400px] w-full mx-auto">
+        <div className="mx-auto w-full max-w-[1400px] p-4 md:p-6 xl:p-8">
           
           {/* High-Density Portfolio Analytics Strip */}
           <AnalyticsKPIStrip data={summaryData} loading={loading} />
@@ -263,18 +265,18 @@ export default function Home() {
           {/* Scenario KPI Distribution (Taiyo Pattern) */}
           <ScenarioHUD scenarios={trackedScenarios} />
           
-          <form className="relative group mb-12" onSubmit={handleSearch}>
+          <form className="group relative mb-8 md:mb-12" onSubmit={handleSearch}>
             <input 
                  type="text" 
                  placeholder="Search tactical Nexus..."
                  value={scenarioQuery}
                  onChange={(e) => setScenarioQuery(e.target.value)}
-                 className="w-full h-16 bg-panel-bg border border-border rounded-2xl text-xs md:text-sm font-bold outline-none focus:border-primary/40 transition-all text-foreground placeholder:text-text-muted italic px-16"
+                 className="h-14 w-full rounded-2xl border border-border bg-panel-bg px-12 pr-24 text-xs font-bold italic text-foreground outline-none transition-all placeholder:text-text-muted focus:border-primary/40 md:h-16 md:px-16 md:pr-32 md:text-sm"
                />
-               <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-primary" size={18} />
+               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary md:left-6" size={18} />
             <button 
               type="submit"
-              className="absolute right-3 top-1/2 -translate-y-1/2 h-10 px-6 bg-primary text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-primary-dark transition-all"
+              className="absolute right-2 top-1/2 h-9 -translate-y-1/2 rounded-xl bg-primary px-4 text-[10px] font-black uppercase tracking-widest text-black transition-all hover:bg-primary-dark md:right-3 md:h-10 md:px-6"
             >
               Search
             </button>
@@ -283,7 +285,7 @@ export default function Home() {
           {/* GeoSyn Intelligence Index (The Divergence Engine) */}
           <GeoSynIndex data={compositeData} onSelectTopic={handleAnalyzeTopic} />
 
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 xl:gap-10">
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-12 xl:gap-10">
             
             <div className="xl:col-span-8 space-y-6 xl:space-y-10 min-w-0">
               <AnimatePresence mode="wait">
@@ -296,11 +298,11 @@ export default function Home() {
                   >
                     {activeTopic ? (
                       <>
-                        <div className="flex justify-end mb-4">
+                        <div className="mb-4 flex justify-start sm:justify-end">
                           <button 
                             onClick={handleFollowTopic}
                             disabled={actionBusy}
-                            className="flex items-center gap-2 px-4 py-2 bg-hazard/10 border border-hazard/20 text-hazard rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-hazard/20 transition-all"
+                            className="flex w-full items-center justify-center gap-2 rounded-xl border border-hazard/20 bg-hazard/10 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-hazard transition-all hover:bg-hazard/20 sm:w-auto"
                           >
                             <Star size={12} fill={trackedScenarios.find(s => s.topic === activeTopic) ? "currentColor" : "none"} />
                             {trackedScenarios.find(s => s.topic === activeTopic) ? "Tracking Scenario" : "Follow Scenario"}
@@ -324,7 +326,7 @@ export default function Home() {
                   </motion.div>
                 )}
                 {activeView === "nexus" && (
-                  <motion.div key="nexus" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="glass-panel p-8 min-h-[600px] border-primary/10">
+                  <motion.div key="nexus" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="glass-panel min-h-[420px] border-primary/10 p-4 md:min-h-[600px] md:p-8">
                     <CausalNexus graphData={nexusData} onSync={syncNexus} isSyncing={actionBusy} onNodeClick={handleAnalyzeTopic} theme={theme} />
                   </motion.div>
                 )}
@@ -344,9 +346,9 @@ export default function Home() {
             {/* Right Column: Tactical HUD */}
             <div className="xl:col-span-4 flex flex-col gap-6 xl:gap-10 min-w-0">
                <section className="glass-panel p-4 md:p-6 xl:sticky xl:top-24">
-                  <div className="flex items-center justify-between mb-6">
+                  <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
                     <h3 className="text-[10px] font-black tracking-widest text-foreground uppercase">Market Correlation</h3>
-                    <div className="flex gap-1">
+                    <div className="flex flex-wrap gap-1">
                       {EXCHANGES.map(ex => (
                         <button 
                           key={ex.id}
@@ -356,11 +358,15 @@ export default function Home() {
                       ))}
                     </div>
                   </div>
-                  <div className="h-[250px] mb-12">
+                  <div className="mb-8 h-[220px] md:mb-12 md:h-[250px]">
                     <MarketChart data={marketData} />
                   </div>
-                  <div className="pt-12 border-t border-border">
-                    <AlertPulse alerts={alerts} onClear={clearAlerts} />
+                  <div className="border-t border-border pt-8 md:pt-12">
+                    <AlertPulse alerts={alerts} onRefresh={async () => {
+      await generateAlertsV2();
+      const freshAlerts = await fetchAlertsV2();
+      setAlerts(freshAlerts as any[]);
+                    }} />
                   </div>
                </section>
                
@@ -371,11 +377,11 @@ export default function Home() {
         </div>
 
 
-        <footer className="mt-auto py-12 px-8 border-t border-border bg-panel-bg text-center">
-            <div className="flex items-center justify-center gap-6 opacity-30">
-               <span className="text-[9px] font-black uppercase tracking-[0.4em]">GeoSyn Intelligence Framework v4.2.0</span>
+        <footer className="mt-auto border-t border-border bg-panel-bg px-4 py-8 text-center md:px-8 md:py-12">
+            <div className="flex flex-col items-center justify-center gap-3 opacity-30 sm:flex-row sm:gap-6">
+               <span className="text-[9px] font-black uppercase tracking-[0.35em]">GeoSyn Intelligence Framework v4.2.0</span>
                <div className="w-1 h-1 rounded-full bg-text-muted" />
-               <span className="text-[9px] font-black uppercase tracking-[0.4em]">Secure Terminal</span>
+               <span className="text-[9px] font-black uppercase tracking-[0.35em]">Secure Terminal</span>
             </div>
         </footer>
       </main>

@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-22T01:04:41.272148",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.cnbc.com/2026/04/21/trump-iran-war-white-house-uae-currency-swap-line.html",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.cnbc.com/2026/04/21/trump-iran-war-white-house-uae-currency-swap-line.html",
+    "title": "Trump administration discussing currency swap line with United Arab Emirates",
+    "content": "Such a move would provide liquidity in dollars to the oil-rich UAE, but could be politically tenuous for the administration amid higher prices at home.",
+    "url": "https://www.cnbc.com/2026/04/21/trump-iran-war-white-house-uae-currency-swap-line.html",
+    "source": "FINANCE",
+    "seendate": "2026-04-21T23:09:55Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

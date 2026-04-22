@@ -1,24 +1,39 @@
 from datetime import datetime
+import json
 from typing import Any, Dict, List, Optional
 
 from sqlalchemy.orm import Session
 
 from app.models.domain import Document, Entity, EventCluster
 from app.models.v2 import (
+    CommodityV2,
+    CustomerAssetV2,
     EntityV2,
+    EvidenceDocumentV2,
     EventEntityV2,
     EventEvidenceV2,
     EventV2,
     ExposureLinkV2,
+    FacilityV2,
     LegacyClusterEventMapV2,
+    PortV2,
+    RiskScoreV2,
+    RouteV2,
+    SupplierV2,
     WatchlistV2,
     WatchlistItemV2,
 )
+from app.services.provenance_service_v2 import ProvenanceServiceV2
+from app.services.risk_scoring_service_v2 import RiskScoringServiceV2
+from app.services.event_timeline_service_v2 import EventTimelineServiceV2
 
 
 class EventServiceV2:
     def __init__(self, db: Session):
         self.db = db
+        self.provenance_service = ProvenanceServiceV2(db)
+        self.risk_service = RiskScoringServiceV2(db)
+        self.timeline_service = EventTimelineServiceV2(db)
 
     def list_events(self, limit: int = 100, skip: int = 0) -> List[EventV2]:
         return (
@@ -109,6 +124,7 @@ class EventServiceV2:
 
     def sync_document_to_cluster_event(self, doc: Document, cluster: EventCluster) -> EventV2:
         event = self.ensure_event_for_cluster(cluster)
+        self.provenance_service.ensure_evidence_document(doc)
         self._attach_document_evidence(event, doc)
         self._attach_document_entities(event, doc)
         event.last_seen_at = max(event.last_seen_at or doc.published_at or datetime.utcnow(), doc.published_at or datetime.utcnow())
@@ -119,6 +135,7 @@ class EventServiceV2:
     def sync_cluster(self, cluster: EventCluster) -> EventV2:
         event = self.ensure_event_for_cluster(cluster)
         for doc in cluster.documents:
+            self.provenance_service.ensure_evidence_document(doc)
             self._attach_document_evidence(event, doc)
             self._attach_document_entities(event, doc)
         self.db.flush()
@@ -179,6 +196,7 @@ class EventServiceV2:
 
     def serialize_event(self, event: EventV2, customer_id: Optional[str] = None) -> Dict[str, Any]:
         explanation = self.explain_event_for_customer(event.id, customer_id) if customer_id else None
+        timelines = self.timeline_service.ensure_timelines_for_event(event)
         evidence = (
             self.db.query(EventEvidenceV2)
             .filter(EventEvidenceV2.event_id == event.id)
@@ -194,6 +212,11 @@ class EventServiceV2:
         documents = []
         for row in evidence[:10]:
             doc = row.legacy_document
+            evidence_doc = (
+                self.db.query(EvidenceDocumentV2)
+                .filter(EvidenceDocumentV2.legacy_document_id == doc.id)
+                .first()
+            )
             documents.append(
                 {
                     "id": doc.id,
@@ -202,6 +225,8 @@ class EventServiceV2:
                     "published_at": doc.published_at.isoformat() if doc.published_at else None,
                     "source_id": doc.source_id,
                     "is_primary": row.is_primary,
+                    "raw_payload_ref": evidence_doc.raw_payload_ref if evidence_doc else None,
+                    "source_confidence": evidence_doc.source_confidence if evidence_doc else None,
                 }
             )
 
@@ -217,6 +242,7 @@ class EventServiceV2:
                 }
             )
 
+        risk_score = explanation["risk_score"] if explanation else None
         return {
             "id": event.id,
             "canonical_title": event.canonical_title,
@@ -230,11 +256,14 @@ class EventServiceV2:
             "summary_text": event.summary_text,
             "document_count": len(evidence),
             "entity_count": len(event_entities),
+            "timeline_count": len(timelines),
             "documents": documents,
             "entities": entities,
+            "timeline": [self.timeline_service.serialize_timeline(row) for row in timelines[:20]],
             "matched_watchlists": explanation["matched_watchlists"] if explanation else [],
             "exposure_matches": explanation["exposure_matches"] if explanation else [],
             "exposure_summary": explanation["summary"] if explanation else None,
+            "risk_score": risk_score,
         }
 
     def explain_event_for_customer(self, event_id: str, customer_id: Optional[str]) -> Dict[str, Any]:
@@ -280,16 +309,20 @@ class EventServiceV2:
                 .all()
             )
             for row in exposure_rows:
+                source_object_name = self._resolve_source_object_name(row.source_object_type, row.source_object_id)
                 exposure_matches.append(
                     {
                         "id": row.id,
                         "source_object_type": row.source_object_type,
                         "source_object_id": row.source_object_id,
+                        "source_object_name": source_object_name,
                         "relationship_type": row.relationship_type,
                         "criticality_score": row.criticality_score,
                         "exposure_weight": row.exposure_weight,
                         "confidence_score": row.confidence_score,
                         "target_entity_id": row.target_entity_id,
+                        "target_entity_name": row.target_entity.canonical_name if row.target_entity else None,
+                        "metadata": self._parse_json(row.metadata_json),
                     }
                 )
 
@@ -298,15 +331,85 @@ class EventServiceV2:
             top = exposure_matches[0]
             summary = (
                 f"Event maps to customer exposure via {top['source_object_type']} "
-                f"{top['source_object_id']} through relationship '{top['relationship_type']}'."
+                f"{top.get('source_object_name') or top['source_object_id']} through relationship '{top['relationship_type']}'."
             )
         elif matched_watchlists:
             top = matched_watchlists[0]
             summary = f"Event matches a customer watchlist item of type '{top['item_type']}'."
+
+        risk_payload = None
+        if customer_id:
+            from app.models.v2 import CustomerV2
+
+            customer = self.db.query(CustomerV2).filter(CustomerV2.id == customer_id).first()
+            if customer:
+                risk = self.risk_service.upsert_event_risk(
+                    event,
+                    customer,
+                    explanation={
+                        "matched_watchlists": matched_watchlists,
+                        "exposure_matches": exposure_matches,
+                        "document_count": self._event_document_count(event.id),
+                    },
+                )
+                risk_payload = self.serialize_risk_score(risk)
 
         return {
             "event_id": event_id,
             "matched_watchlists": matched_watchlists,
             "exposure_matches": exposure_matches,
             "summary": summary,
+            "risk_score": risk_payload,
         }
+
+    def get_risk_score(self, event_id: str, customer_id: str) -> Optional[Dict[str, Any]]:
+        risk = self.risk_service.get_event_risk(event_id, customer_id)
+        return self.serialize_risk_score(risk) if risk else None
+
+    @staticmethod
+    def serialize_risk_score(risk: Optional[RiskScoreV2]) -> Optional[Dict[str, Any]]:
+        if not risk:
+            return None
+        return {
+            "id": risk.id,
+            "score_type": risk.score_type,
+            "score_value": risk.score_value,
+            "confidence_score": risk.confidence_score,
+            "severity": risk.severity,
+            "rationale_text": risk.rationale_text,
+            "scored_at": risk.scored_at.isoformat() if risk.scored_at else None,
+            "metadata": EventServiceV2._parse_json(risk.metadata_json),
+        }
+
+    def _event_document_count(self, event_id: str) -> int:
+        return (
+            self.db.query(EventEvidenceV2)
+            .filter(EventEvidenceV2.event_id == event_id)
+            .count()
+        )
+
+    def _resolve_source_object_name(self, source_object_type: str, source_object_id: str) -> Optional[str]:
+        mapping = {
+            "supplier": (SupplierV2, "supplier_name"),
+            "facility": (FacilityV2, "facility_name"),
+            "port": (PortV2, "port_name"),
+            "route": (RouteV2, "route_name"),
+            "commodity": (CommodityV2, "commodity_name"),
+            "customer_asset": (CustomerAssetV2, "asset_label"),
+            "asset": (CustomerAssetV2, "asset_label"),
+        }
+        model_field = mapping.get(source_object_type.lower())
+        if not model_field:
+            return None
+        model, field_name = model_field
+        row = self.db.query(model).filter(model.id == source_object_id).first()
+        return getattr(row, field_name, None) if row else None
+
+    @staticmethod
+    def _parse_json(payload: Optional[str]) -> Any:
+        if not payload:
+            return None
+        try:
+            return json.loads(payload)
+        except Exception:  # noqa: BLE001
+            return payload

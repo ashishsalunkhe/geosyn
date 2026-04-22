@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-18T16:15:56.185560",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cp84rye3lg8o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cp84rye3lg8o?at_medium=RSS&at_campaign=rss",
+    "title": "DR Congo accepts first set of deportees from the US",
+    "content": "The Congolese government stresses those expelled from the US are only in the country temporarily.",
+    "url": "https://www.bbc.com/news/articles/cp84rye3lg8o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-18T10:18:16Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-18T21:19:34.429171",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/videos/cly90z9g5q3o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/videos/cly90z9g5q3o?at_medium=RSS&at_campaign=rss",
+    "title": "BBC reports from Lebanese border town as residents try to return home",
+    "content": "BBC Arabic's correspondent Carine Torbey reports from the border town of Khiam, as the ceasefire between Israel and Hezbollah in southern Lebanon goes into its second day.",
+    "url": "https://www.bbc.com/news/videos/cly90z9g5q3o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-18T12:47:11Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

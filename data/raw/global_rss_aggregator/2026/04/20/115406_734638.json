@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-20T11:54:06.734638",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.cnbc.com/2026/04/20/stocks-making-the-biggest-moves-premarket-aal-mrvl-mstr.html",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.cnbc.com/2026/04/20/stocks-making-the-biggest-moves-premarket-aal-mrvl-mstr.html",
+    "title": "Stocks making the biggest moves premarket: American Airlines, Marvell Technology, Strategy & more",
+    "content": "These are the stocks posting the largest moves premarket.",
+    "url": "https://www.cnbc.com/2026/04/20/stocks-making-the-biggest-moves-premarket-aal-mrvl-mstr.html",
+    "source": "FINANCE",
+    "seendate": "2026-04-20T12:33:31Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

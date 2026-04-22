@@ -1,0 +1,18 @@
+{
+  "ingested_at": "2026-04-20T00:21:10.341419",
+  "source": "fred",
+  "metadata": {
+    "external_id": "fred-UNRATE-2026-04-19",
+    "provider": "FRED"
+  },
+  "data": {
+    "id": "fred-UNRATE-2026-04-19",
+    "title": "Macro Signal: Unemployment Rate (BLS)",
+    "content": "FRED reports Unemployment Rate (BLS) at 3.8019 for period 2026-04-19.",
+    "url": "https://fred.stlouisfed.org/series/UNRATE",
+    "published_at": "2026-04-19",
+    "source": "FRED",
+    "raw_val": 3.8019,
+    "indicator_code": "UNRATE"
+  }
+}

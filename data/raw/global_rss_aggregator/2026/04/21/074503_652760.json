@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-21T07:45:03.652760",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cwyw2zvqxe2o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cwyw2zvqxe2o?at_medium=RSS&at_campaign=rss",
+    "title": "Indian politicians are campaigning while holding fish. What is going on?",
+    "content": "In West Bengal polls, fish moves from plate to politics, symbolising identity and cultural pride.",
+    "url": "https://www.bbc.com/news/articles/cwyw2zvqxe2o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-20T22:01:31Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

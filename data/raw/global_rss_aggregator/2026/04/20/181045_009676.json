@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-20T18:10:45.009676",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cjr9vvr904wo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cjr9vvr904wo?at_medium=RSS&at_campaign=rss",
+    "title": "Police gunfight with favela gang traps 200 tourists on hilltop",
+    "content": "The access route to Morro Dois Irm\u00e3os was blocked during the operation in Vidigal, leaving scores of alarmed sightseers stuck on the hill.",
+    "url": "https://www.bbc.com/news/articles/cjr9vvr904wo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-20T18:34:10Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

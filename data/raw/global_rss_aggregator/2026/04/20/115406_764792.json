@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-20T11:54:06.764792",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cn4vn021mg9o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cn4vn021mg9o?at_medium=RSS&at_campaign=rss",
+    "title": "Rebel Wilson's claims against actress are 'malicious concoctions', Australian court hears",
+    "content": "Wilson has been accused of defaming the star of her film The Deb over an incident involving a bath in Bondi.",
+    "url": "https://www.bbc.com/news/articles/cn4vn021mg9o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-20T11:19:50Z",
+    "tone": 3.5,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

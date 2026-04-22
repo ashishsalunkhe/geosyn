@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from typing import Dict, List, Optional
 
@@ -32,7 +33,7 @@ class AlertServiceV2:
                 continue
 
             top_match = explanation["exposure_matches"][0]
-            severity = self._derive_severity(top_match)
+            severity = explanation.get("risk_score", {}).get("severity") or self._derive_severity(top_match)
             alert = AlertV2(
                 customer_id=customer.id,
                 event_id=event.id,
@@ -43,6 +44,12 @@ class AlertServiceV2:
                 summary_text=explanation["summary"],
                 recommended_action=self._recommended_action(severity),
                 triggered_at=datetime.utcnow(),
+                metadata_json=json.dumps(
+                    {
+                        "risk_score": explanation.get("risk_score"),
+                        "top_exposure_match": top_match,
+                    }
+                ),
                 created_at=datetime.utcnow(),
                 updated_at=datetime.utcnow(),
             )
@@ -154,3 +161,12 @@ class AlertServiceV2:
             "low": "Track only unless additional signals accumulate.",
         }
         return mapping[severity]
+
+    @staticmethod
+    def parse_metadata(alert: AlertV2) -> object:
+        if not alert.metadata_json:
+            return None
+        try:
+            return json.loads(alert.metadata_json)
+        except Exception:  # noqa: BLE001
+            return alert.metadata_json

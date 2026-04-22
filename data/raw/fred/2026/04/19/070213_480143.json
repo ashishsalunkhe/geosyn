@@ -1,0 +1,18 @@
+{
+  "ingested_at": "2026-04-19T07:02:13.480143",
+  "source": "fred",
+  "metadata": {
+    "external_id": "fred-INDPRO-2026-04-18",
+    "provider": "FRED"
+  },
+  "data": {
+    "id": "fred-INDPRO-2026-04-18",
+    "title": "Macro Signal: Industrial Production Index",
+    "content": "FRED reports Industrial Production Index at 102.452 for period 2026-04-18.",
+    "url": "https://fred.stlouisfed.org/series/INDPRO",
+    "published_at": "2026-04-18",
+    "source": "FRED",
+    "raw_val": 102.452,
+    "indicator_code": "INDPRO"
+  }
+}

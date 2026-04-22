@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-19T11:44:37.418461",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/c248m3z49j1o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/c248m3z49j1o?at_medium=RSS&at_campaign=rss",
+    "title": "Zelensky condemns US extension of Russian sanctions waiver",
+    "content": "The US argues that the waiver is meant to ease the energy supply crunch sparked by the US-Israel war with Iran.",
+    "url": "https://www.bbc.com/news/articles/c248m3z49j1o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-19T10:55:22Z",
+    "tone": -3.5,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

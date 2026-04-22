@@ -33,8 +33,16 @@
 }
 
 @layer base {
+  html {
+    @apply overflow-x-hidden;
+  }
+
   body {
-    @apply bg-background text-foreground font-tactical antialiased transition-colors duration-300;
+    @apply overflow-x-hidden bg-background text-foreground font-tactical antialiased transition-colors duration-300;
+  }
+
+  * {
+    min-width: 0;
   }
 }
 
@@ -67,3 +75,35 @@
 
 .chart-gradient-stop-1 { stop-color: var(--primary); stop-opacity: 0.3; }
 .chart-gradient-stop-2 { stop-color: var(--primary); stop-opacity: 0; }
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}

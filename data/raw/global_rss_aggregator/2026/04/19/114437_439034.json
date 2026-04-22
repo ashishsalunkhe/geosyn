@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-19T11:44:37.439034",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cx2ddjv90v9o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cx2ddjv90v9o?at_medium=RSS&at_campaign=rss",
+    "title": "'The weapons were loud, but there was always music': Sudanese band play on through the war",
+    "content": "One of Sudan's most popular bands, Aswat Almadina, recall being in the studio when the war broke out three years ago.",
+    "url": "https://www.bbc.com/news/articles/cx2ddjv90v9o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-19T00:09:49Z",
+    "tone": -3.5,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

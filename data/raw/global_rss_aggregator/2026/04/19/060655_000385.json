@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-19T06:06:55.000385",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cy91r7ww3weo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cy91r7ww3weo?at_medium=RSS&at_campaign=rss",
+    "title": "Australia's most-decorated soldier vows to 'fight' war crime charges",
+    "content": "Ben Roberts-Smith has given his first statement since he was charged with five counts of the war crime of murder last week.",
+    "url": "https://www.bbc.com/news/articles/cy91r7ww3weo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-19T06:12:40Z",
+    "tone": -3.5,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

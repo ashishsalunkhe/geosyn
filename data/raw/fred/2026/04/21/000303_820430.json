@@ -1,0 +1,18 @@
+{
+  "ingested_at": "2026-04-21T00:03:03.820430",
+  "source": "fred",
+  "metadata": {
+    "external_id": "fred-GDPC1-2026-04-20",
+    "provider": "FRED"
+  },
+  "data": {
+    "id": "fred-GDPC1-2026-04-20",
+    "title": "Macro Signal: Real GDP (BEA)",
+    "content": "FRED reports Real GDP (BEA) at 22000.0203 for period 2026-04-20.",
+    "url": "https://fred.stlouisfed.org/series/GDPC1",
+    "published_at": "2026-04-20",
+    "source": "FRED",
+    "raw_val": 22000.0203,
+    "indicator_code": "GDPC1"
+  }
+}

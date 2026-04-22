@@ -1,0 +1,18 @@
+{
+  "ingested_at": "2026-04-20T00:21:10.330651",
+  "source": "fred",
+  "metadata": {
+    "external_id": "fred-T10Y2Y-2026-04-19",
+    "provider": "FRED"
+  },
+  "data": {
+    "id": "fred-T10Y2Y-2026-04-19",
+    "title": "Macro Signal: Yield Spread (Recession Indicator)",
+    "content": "FRED reports Yield Spread (Recession Indicator) at -0.4711 for period 2026-04-19.",
+    "url": "https://fred.stlouisfed.org/series/T10Y2Y",
+    "published_at": "2026-04-19",
+    "source": "FRED",
+    "raw_val": -0.4711,
+    "indicator_code": "T10Y2Y"
+  }
+}

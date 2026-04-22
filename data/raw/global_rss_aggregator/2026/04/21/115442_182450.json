@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-21T11:54:42.182450",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cd9v420y190o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cd9v420y190o?at_medium=RSS&at_campaign=rss",
+    "title": "Zelensky says failure of US envoys to visit Kyiv is 'disrespectful'",
+    "content": "US envoy Steve Witkoff and Donald Trump's son-in-law Jared Kushner have travelled to Moscow several times, but never to Kyiv.",
+    "url": "https://www.bbc.com/news/articles/cd9v420y190o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-21T12:37:11Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

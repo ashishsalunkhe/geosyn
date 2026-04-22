@@ -23,8 +23,18 @@ interface GeoSynIndexProps {
   onSelectTopic?: (topic: string) => void;
 }
 
+interface GeoSynScore {
+  topic: string;
+  riskScore: string;
+  impactScore: string;
+  nexusDepth: number;
+  attention: number;
+  gap: string;
+  isCritical: boolean;
+}
+
 export default function GeoSynIndex({ data, onSelectTopic }: GeoSynIndexProps) {
-  const scores = useMemo(() => {
+  const scores = useMemo<GeoSynScore[]>(() => {
     if (!data || !data.nexus || !data.trends) return [];
 
     const nodes = data.nexus.nodes || [];
@@ -39,7 +49,7 @@ export default function GeoSynIndex({ data, onSelectTopic }: GeoSynIndexProps) {
     });
 
     // Match top topics to nexus nodes
-    return topTopics.map((tt: any) => {
+    return topTopics.map((tt: any): GeoSynScore => {
       const topic = tt.topic;
       const newsCount = tt.count;
 
@@ -77,7 +87,7 @@ export default function GeoSynIndex({ data, onSelectTopic }: GeoSynIndexProps) {
         gap: gap.toFixed(2),
         isCritical: gap > 1.5,
       };
-    }).sort((a: any, b: any) => parseFloat(b.riskScore) - parseFloat(a.riskScore));
+    }).sort((a: GeoSynScore, b: GeoSynScore) => parseFloat(b.riskScore) - parseFloat(a.riskScore));
   }, [data]);
 
   if (!data) return null;
@@ -97,7 +107,7 @@ export default function GeoSynIndex({ data, onSelectTopic }: GeoSynIndexProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {scores.filter(s => s.isCritical).slice(0, 2).map((s, idx) => (
+            {scores.filter((s) => s.isCritical).slice(0, 2).map((s, idx) => (
               <motion.div
                 key={s.topic}
                 initial={{ opacity: 0, x: -20 }}
@@ -125,7 +135,7 @@ export default function GeoSynIndex({ data, onSelectTopic }: GeoSynIndexProps) {
                 </div>
               </motion.div>
             ))}
-            {scores.filter(s => s.isCritical).length === 0 && (
+            {scores.filter((s) => s.isCritical).length === 0 && (
               <div className="col-span-2 p-8 glass-panel border-dashed text-center opacity-40">
                 <Fingerprint size={32} className="mx-auto mb-3 text-text-muted" />
                 <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">No Critical Intelligence Gaps Detected</p>

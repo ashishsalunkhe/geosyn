@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-22T01:04:41.278522",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/videos/ce9mernj0gko?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/videos/ce9mernj0gko?at_medium=RSS&at_campaign=rss",
+    "title": "Mass trial for 486 alleged gang members begins in El Salvador",
+    "content": "Footage released by the attorney general's office shows large groups of men in prison attending the trial via video link.",
+    "url": "https://www.bbc.com/news/videos/ce9mernj0gko?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-21T18:45:39Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

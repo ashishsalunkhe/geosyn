@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-18T17:16:46.804035",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/ce84j261kj1o?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/ce84j261kj1o?at_medium=RSS&at_campaign=rss",
+    "title": "Pope says 'tyrants' speech was not aimed at Trump",
+    "content": "The pontiff says his remarks have been misinterpreted after a spat with the US president.",
+    "url": "https://www.bbc.com/news/articles/ce84j261kj1o?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-18T17:44:39Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-18T05:50:24.870853",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/c4g40npz37lo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/c4g40npz37lo?at_medium=RSS&at_campaign=rss",
+    "title": "Orb\u00e1n's era was over in a flash and Hungary's next PM is a man in a hurry",
+    "content": "P\u00e9ter Magyar and his Tisza party are wasting no time preparing for the transfer of power after their dramatic landslide victory.",
+    "url": "https://www.bbc.com/news/articles/c4g40npz37lo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-18T05:46:34Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

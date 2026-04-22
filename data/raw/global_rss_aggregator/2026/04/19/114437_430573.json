@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-19T11:44:37.430573",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/videos/cz0e54yrppno?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/videos/cz0e54yrppno?at_medium=RSS&at_campaign=rss",
+    "title": "Watch: Runners v robots at China half marathon",
+    "content": "Robots competed in a half marathon race in Beijing on Sunday, with the winning machine leaving its human rivals for dust.",
+    "url": "https://www.bbc.com/news/videos/cz0e54yrppno?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-19T09:46:34Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

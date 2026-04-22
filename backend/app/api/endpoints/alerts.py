@@ -72,6 +72,7 @@ def read_alerts_v2(
             "summary_text": a.summary_text,
             "recommended_action": a.recommended_action,
             "triggered_at": a.triggered_at.isoformat(),
+            "metadata": service.parse_metadata(a),
         }
         for a in alerts
     ]
@@ -107,6 +108,7 @@ def read_alert_v2(
         "recommended_action": alert.recommended_action,
         "triggered_at": alert.triggered_at.isoformat(),
         "resolved_at": alert.resolved_at.isoformat() if alert.resolved_at else None,
+        "metadata": service.parse_metadata(alert),
     }
 
 

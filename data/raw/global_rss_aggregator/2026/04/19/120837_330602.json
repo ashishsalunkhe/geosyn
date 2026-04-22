@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-19T12:08:37.330602",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/videos/c0le5pdgdzwo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/videos/c0le5pdgdzwo?at_medium=RSS&at_campaign=rss",
+    "title": "Watch: Obama and Mamdani sing with children in New York",
+    "content": "The former US president and New York City mayor meet for the first time at a child care centre in the Bronx.",
+    "url": "https://www.bbc.com/news/videos/c0le5pdgdzwo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-19T12:19:32Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "ingested_at": "2026-04-21T00:03:03.807481",
+  "source": "fred",
+  "metadata": {
+    "external_id": "fred-CPIAUCSL-2026-04-20",
+    "provider": "FRED"
+  },
+  "data": {
+    "id": "fred-CPIAUCSL-2026-04-20",
+    "title": "Macro Signal: Consumer Price Index (Inflation)",
+    "content": "FRED reports Consumer Price Index (Inflation) at 309.8863 for period 2026-04-20.",
+    "url": "https://fred.stlouisfed.org/series/CPIAUCSL",
+    "published_at": "2026-04-20",
+    "source": "FRED",
+    "raw_val": 309.8863,
+    "indicator_code": "CPIAUCSL"
+  }
+}

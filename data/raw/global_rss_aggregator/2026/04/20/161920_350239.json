@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-20T16:19:20.350239",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/czx9q51rldko?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/czx9q51rldko?at_medium=RSS&at_campaign=rss",
+    "title": "Days of Our Lives and Starship Troopers actor Patrick Muldoon dies aged 57",
+    "content": "The actor and producer also appeared in Melrose Place and Saved By the Bell.",
+    "url": "https://www.bbc.com/news/articles/czx9q51rldko?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-20T16:51:43Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

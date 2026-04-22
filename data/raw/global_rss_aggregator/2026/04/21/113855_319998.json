@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-21T11:38:55.319998",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cn4vkye71ypo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cn4vkye71ypo?at_medium=RSS&at_campaign=rss",
+    "title": "How will 'product guy' John Ternus evolve Apple?",
+    "content": "As Tim Cook announces his departure from the top job at Apple, these are the key challenges for new boss John Ternus.",
+    "url": "https://www.bbc.com/news/articles/cn4vkye71ypo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-21T12:33:12Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}
