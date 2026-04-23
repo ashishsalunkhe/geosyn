@@ -8,7 +8,7 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision = "0001_v2_foundation"
+revision = "1_foundation"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -18,7 +18,7 @@ def upgrade() -> None:
     op.create_table(
         "entities_v2",
         sa.Column("id", sa.String(length=36), primary_key=True),
-        sa.Column("legacy_entity_id", sa.Integer(), sa.ForeignKey("entities.id"), nullable=True),
+        sa.Column("legacy_entity_id", sa.Integer(), nullable=True),
         sa.Column("entity_type", sa.String(), nullable=False),
         sa.Column("canonical_name", sa.String(), nullable=False),
         sa.Column("display_name", sa.String(), nullable=True),
@@ -27,8 +27,7 @@ def upgrade() -> None:
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("legacy_entity_id"),
-    )
+        sa.UniqueConstraint("legacy_entity_id"))
     op.create_index("ix_entities_v2_legacy_entity_id", "entities_v2", ["legacy_entity_id"])
     op.create_index("ix_entities_v2_entity_type", "entities_v2", ["entity_type"])
     op.create_index("ix_entities_v2_canonical_name", "entities_v2", ["canonical_name"])
@@ -48,8 +47,7 @@ def upgrade() -> None:
         sa.Column("summary_text", sa.Text(), nullable=True),
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), nullable=False),
-    )
+        sa.Column("updated_at", sa.DateTime(), nullable=False))
     op.create_index("ix_events_canonical_title", "events", ["canonical_title"])
     op.create_index("ix_events_status", "events", ["status"])
     op.create_index("ix_events_first_seen_at", "events", ["first_seen_at"])
@@ -59,13 +57,12 @@ def upgrade() -> None:
         "event_evidence",
         sa.Column("id", sa.Integer(), primary_key=True),
         sa.Column("event_id", sa.String(length=36), sa.ForeignKey("events.id"), nullable=False),
-        sa.Column("legacy_document_id", sa.Integer(), sa.ForeignKey("documents.id"), nullable=False),
+        sa.Column("legacy_document_id", sa.Integer(), nullable=False),
         sa.Column("contribution_type", sa.String(), nullable=True),
         sa.Column("relevance_score", sa.Float(), nullable=True),
         sa.Column("is_primary", sa.Boolean(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("event_id", "legacy_document_id", name="uq_event_evidence_event_legacy_document"),
-    )
+        sa.UniqueConstraint("event_id", "legacy_document_id", name="uq_event_evidence_event_legacy_document"))
     op.create_index("ix_event_evidence_event_id", "event_evidence", ["event_id"])
     op.create_index("ix_event_evidence_legacy_document_id", "event_evidence", ["legacy_document_id"])
 
@@ -79,19 +76,17 @@ def upgrade() -> None:
         sa.Column("is_primary", sa.Boolean(), nullable=False),
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("event_id", "entity_id", "event_role", name="uq_event_entities_event_entity_role"),
-    )
+        sa.UniqueConstraint("event_id", "entity_id", "event_role", name="uq_event_entities_event_entity_role"))
     op.create_index("ix_event_entities_event_id", "event_entities", ["event_id"])
     op.create_index("ix_event_entities_entity_id", "event_entities", ["entity_id"])
     op.create_index("ix_event_entities_event_role", "event_entities", ["event_role"])
 
     op.create_table(
         "legacy_cluster_event_map",
-        sa.Column("legacy_cluster_id", sa.Integer(), sa.ForeignKey("event_clusters.id"), primary_key=True),
+        sa.Column("legacy_cluster_id", sa.Integer(), primary_key=True),
         sa.Column("event_id", sa.String(length=36), sa.ForeignKey("events.id"), nullable=False),
         sa.Column("migrated_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("event_id"),
-    )
+        sa.UniqueConstraint("event_id"))
     op.create_index("ix_legacy_cluster_event_map_event_id", "legacy_cluster_event_map", ["event_id"])
 
     op.create_table(
@@ -104,8 +99,7 @@ def upgrade() -> None:
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("slug"),
-    )
+        sa.UniqueConstraint("slug"))
     op.create_index("ix_customers_name", "customers", ["name"])
     op.create_index("ix_customers_slug", "customers", ["slug"])
     op.create_index("ix_customers_industry", "customers", ["industry"])
@@ -119,8 +113,7 @@ def upgrade() -> None:
         sa.Column("watchlist_type", sa.String(), nullable=True),
         sa.Column("is_default", sa.Boolean(), nullable=False),
         sa.Column("metadata", sa.Text(), nullable=True),
-        sa.Column("created_at", sa.DateTime(), nullable=False),
-    )
+        sa.Column("created_at", sa.DateTime(), nullable=False))
     op.create_index("ix_watchlists_customer_id", "watchlists", ["customer_id"])
     op.create_index("ix_watchlists_watchlist_type", "watchlists", ["watchlist_type"])
 
@@ -132,8 +125,7 @@ def upgrade() -> None:
         sa.Column("item_type", sa.String(), nullable=False),
         sa.Column("criticality_score", sa.Float(), nullable=True),
         sa.Column("metadata", sa.Text(), nullable=True),
-        sa.Column("created_at", sa.DateTime(), nullable=False),
-    )
+        sa.Column("created_at", sa.DateTime(), nullable=False))
     op.create_index("ix_watchlist_items_watchlist_id", "watchlist_items", ["watchlist_id"])
     op.create_index("ix_watchlist_items_entity_id", "watchlist_items", ["entity_id"])
     op.create_index("ix_watchlist_items_item_type", "watchlist_items", ["item_type"])
@@ -152,8 +144,7 @@ def upgrade() -> None:
         sa.Column("valid_from", sa.DateTime(), nullable=True),
         sa.Column("valid_to", sa.DateTime(), nullable=True),
         sa.Column("metadata", sa.Text(), nullable=True),
-        sa.Column("created_at", sa.DateTime(), nullable=False),
-    )
+        sa.Column("created_at", sa.DateTime(), nullable=False))
     op.create_index("ix_exposure_links_customer_id", "exposure_links", ["customer_id"])
     op.create_index("ix_exposure_links_source_object_type", "exposure_links", ["source_object_type"])
     op.create_index("ix_exposure_links_source_object_id", "exposure_links", ["source_object_id"])

@@ -107,7 +107,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
                         rel="noreferrer"
                         className="flex items-center justify-between p-3 rounded-xl bg-black/20 border border-white/5 hover:border-primary/30 transition-all group/link"
                       >
-                        <span className="text-xs font-semibold text-zinc-300 group-hover/link:text-white truncate max-w-[80%]">
+                        <span className="max-w-[80%] wrap-anywhere text-xs font-semibold text-zinc-300 group-hover/link:text-white">
                           {doc.title}
                         </span>
                         <Activity size={12} className="text-zinc-500 group-hover/link:text-primary" />

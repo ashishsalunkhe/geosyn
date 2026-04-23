@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-22T18:55:44.485715",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.cnbc.com/2026/04/22/iran-war-treasury-uae-scott-bessent-currency-swaps.html",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.cnbc.com/2026/04/22/iran-war-treasury-uae-scott-bessent-currency-swaps.html",
+    "title": "Bessent says 'many' U.S. allies have asked for currency swaps amid Iran war turbulence",
+    "content": "The White House on Tuesday said the UAE had not requested a currency swap line.",
+    "url": "https://www.cnbc.com/2026/04/22/iran-war-treasury-uae-scott-bessent-currency-swaps.html",
+    "source": "FINANCE",
+    "seendate": "2026-04-22T19:46:20Z",
+    "tone": -3.5,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

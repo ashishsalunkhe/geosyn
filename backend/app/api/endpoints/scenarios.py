@@ -111,8 +111,35 @@ def run_scenario_sync(topic: str, db: Session = Depends(get_db)):
     }
 
 @router.get("/trending", response_model=List[dict])
-def get_trending_scenarios():
-    """Returns mock 'Community' strategic priorities for the Discovery Grid."""
+def get_trending_scenarios(db: Session = Depends(get_db)):
+    """Returns a discovery list backed by real tracked scenarios, with a static fallback."""
+    scenarios = (
+        db.query(StrategicScenario)
+        .order_by(StrategicScenario.risk_score.desc(), StrategicScenario.last_signal_at.desc())
+        .limit(4)
+        .all()
+    )
+    if scenarios:
+        def interest(score: float) -> str:
+            if score >= 0.8:
+                return "HIGH"
+            if score >= 0.55:
+                return "MEDIUM"
+            return "LOW"
+
+        return [
+            {
+                "id": f"trend-{scenario.id}",
+                "topic": scenario.topic,
+                "status": scenario.status,
+                "region": scenario.region,
+                "sector": scenario.sector,
+                "risk_score": scenario.risk_score,
+                "community_interest": interest(float(scenario.risk_score or 0)),
+            }
+            for scenario in scenarios
+        ]
+
     return [
         {
             "id": "trend-1",
@@ -179,4 +206,3 @@ def get_portfolio_summary(db: Session = Depends(get_db)):
         "avg_confidence": 88.2,
         "market_exposure": round(avg_risk * 1.2, 1)
     }
-

@@ -226,7 +226,7 @@ export default function IntelligenceBrief({ topic, ticker }: IntelligenceBriefPr
                              <span className="text-[8px] font-black text-primary/60 uppercase tracking-widest">{item.source}</span>
                              <span className="text-[9px] font-bold text-text-muted italic">{item.seendate ? new Date(item.seendate).toLocaleDateString() : 'N/A'}</span>
                           </div>
-                          <h4 className="text-[13px] font-black text-foreground italic leading-tight group-hover:text-primary transition-colors cursor-pointer truncate uppercase" onClick={() => window.open(item.url, '_blank')}>
+                          <h4 className="wrap-anywhere line-clamp-2 text-[13px] font-black text-foreground italic leading-tight group-hover:text-primary transition-colors cursor-pointer uppercase" onClick={() => window.open(item.url, '_blank')}>
                              {item.title}
                           </h4>
                         </div>
@@ -318,7 +318,7 @@ const AssetCard = ({ effect, idx }: { effect: any, idx: number }) => {
       <div className="flex items-start justify-between mb-4">
         <div className="flex flex-col">
           <span className="text-[8px] font-black text-primary tracking-widest uppercase mb-1">{effect.category}</span>
-          <h4 className="text-[13px] font-black text-foreground italic uppercase truncate w-32 leading-none">{effect.asset}</h4>
+          <h4 className="wrap-anywhere max-w-[10rem] text-[13px] font-black text-foreground italic uppercase leading-tight">{effect.asset}</h4>
         </div>
         <div className={`text-xl font-black leading-none ${effect.direction === 'UP' ? 'text-success' : 'text-error'}`}>
           {effect.direction === 'UP' ? '↑' : '↓'}

@@ -1,47 +1,48 @@
 """
-One-shot migration script: creates all tables (or adds missing columns)
-so that geosyn.db matches the current SQLAlchemy models.
+Database migration helper for the GeoSyn Postgres stack.
 
-Run from backend/:
+Recommended:
+    alembic upgrade head
+
+Compatibility fallback:
     python migrate_db.py
 """
-import sys
 import os
+import sys
+
+import sqlalchemy as sa
+
 sys.path.insert(0, os.path.dirname(__file__))
 
-from app.db.base import Base  # noqa – triggers model registration via wildcard import
-from app.db.session import engine
-import sqlalchemy as sa
+from app.db.base import Base  # noqa: E402
+from app.db.session import engine  # noqa: E402
+
+
+def column_exists(inspector, table_name: str, column_name: str) -> bool:
+    if table_name not in inspector.get_table_names():
+        return False
+    return column_name in {column["name"] for column in inspector.get_columns(table_name)}
 
 
 def migrate():
-    # ---------- 1. Create any tables that don't exist yet ----------
     Base.metadata.create_all(bind=engine)
-    print("[migrate] create_all() complete – all defined tables now exist.")
+    print("[migrate] create_all() complete.")
 
-    # ---------- 2. Add missing columns to existing tables ----------
     inspector = sa.inspect(engine)
 
-    # -- alerts.alert_payload (JSON / TEXT in SQLite) --
-    alerts_cols = {c["name"] for c in inspector.get_columns("alerts")}
-    if "alert_payload" not in alerts_cols:
-        with engine.connect() as conn:
-            conn.execute(sa.text("ALTER TABLE alerts ADD COLUMN alert_payload TEXT"))
-            conn.commit()
-        print("[migrate] Added missing column: alerts.alert_payload")
-    else:
-        print("[migrate] alerts.alert_payload already present – skipping.")
+    if column_exists(inspector, "alerts", "alert_payload"):
+        print("[migrate] alerts.alert_payload already present.")
+    elif "alerts" in inspector.get_table_names():
+        with engine.begin() as connection:
+            connection.execute(sa.text("ALTER TABLE alerts ADD COLUMN alert_payload JSON"))
+        print("[migrate] Added alerts.alert_payload")
 
-    # -- causal_nodes.node_meta (JSON / TEXT in SQLite) --
-    if "causal_nodes" in inspector.get_table_names():
-        cn_cols = {c["name"] for c in inspector.get_columns("causal_nodes")}
-        if "node_meta" not in cn_cols:
-            with engine.connect() as conn:
-                conn.execute(sa.text("ALTER TABLE causal_nodes ADD COLUMN node_meta TEXT"))
-                conn.commit()
-            print("[migrate] Added missing column: causal_nodes.node_meta")
-        else:
-            print("[migrate] causal_nodes.node_meta already present – skipping.")
+    if column_exists(inspector, "causal_nodes", "node_meta"):
+        print("[migrate] causal_nodes.node_meta already present.")
+    elif "causal_nodes" in inspector.get_table_names():
+        with engine.begin() as connection:
+            connection.execute(sa.text("ALTER TABLE causal_nodes ADD COLUMN node_meta JSON"))
+        print("[migrate] Added causal_nodes.node_meta")
 
     print("[migrate] Migration complete.")
 

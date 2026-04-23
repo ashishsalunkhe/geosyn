@@ -124,7 +124,7 @@ export default function IntelligenceLedger({ records }: IntelligenceLedgerProps)
                 <td className="px-6 py-4 max-w-md">
                    <div className="flex flex-col gap-0.5">
                       <span className="text-[7px] font-black text-primary/60 uppercase tracking-widest">{r.source}</span>
-                      <span className="text-[10px] font-bold text-foreground/80 group-hover:text-primary transition-colors truncate">{r.title}</span>
+                      <span className="wrap-anywhere line-clamp-2 text-[10px] font-bold text-foreground/80 group-hover:text-primary transition-colors">{r.title}</span>
                    </div>
                 </td>
                 <td className="px-6 py-4">

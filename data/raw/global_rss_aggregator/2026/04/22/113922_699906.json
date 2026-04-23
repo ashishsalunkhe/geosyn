@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-22T11:39:22.699906",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cre1r4n5j5wo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cre1r4n5j5wo?at_medium=RSS&at_campaign=rss",
+    "title": "Lufthansa cuts 20,000 summer flights as fuel prices surge",
+    "content": "The airline is the latest to cut flights as the US-Israel war with Iran sends jet fuel prices soaring.",
+    "url": "https://www.bbc.com/news/articles/cre1r4n5j5wo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-22T11:31:29Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

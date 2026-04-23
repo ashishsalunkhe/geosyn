@@ -4,9 +4,10 @@ import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   fetchEventsV2, 
-  syncMarkets, 
+  syncMarketsQueued, 
   fetchAlertsV2, 
   generateAlertsV2,
+  generateAlertsV2Queued,
   fetchPortfolioSummary,
   followScenario,
   fetchIntelligenceComposite,
@@ -14,7 +15,11 @@ import {
   fetchScenarios,
   fetchTrendingScenarios,
   fetchNexusGraph,
-  syncNexus
+  syncNexus,
+  syncNexusQueued,
+  triggerIngestionQueued,
+  triggerClusteringQueued,
+  waitForTask,
 } from "../lib/api";
 import MarketChart from "../components/MarketChart";
 import AlertPulse from "../components/AlertPulse";
@@ -25,6 +30,7 @@ import AnalyticsKPIStrip from "../components/AnalyticsKPIStrip";
 import LiveFeed from "../components/LiveFeed";
 import InsightVault from "../components/InsightVault";
 import ClusterMap from "../components/ClusterMap";
+import EventDetailPanel from "../components/EventDetailPanel";
 import ScenarioHUD from "../components/ScenarioHUD";
 import TopicSidebar from "../components/TopicSidebar";
 import GeoSynIndex from "../components/GeoSynIndex";
@@ -68,6 +74,8 @@ export default function Home() {
   const [activeSector, setActiveSector] = useState("GENERAL");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [compositeData, setCompositeData] = useState<any>(null);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [syncStatus, setSyncStatus] = useState("");
 
   const loadData = useCallback(async () => {
     try {
@@ -80,6 +88,12 @@ export default function Home() {
         fetchPortfolioSummary()
       ]);
       setEvents(evs as any[]);
+      setSelectedEventId((current) => {
+        const nextEvents = evs as any[];
+        if (!nextEvents.length) return null;
+        if (current && nextEvents.some((event) => event.id === current)) return current;
+        return nextEvents[0]?.id ?? null;
+      });
       setAlerts(alrts as any[]);
       setMarketData(market as any);
       setTrackedScenarios(scens as any[]);
@@ -165,10 +179,29 @@ export default function Home() {
   const handleFullSync = async () => {
     try {
       setActionBusy(true);
-      await syncMarkets();
-      await generateAlertsV2();
+      setSyncStatus("Queueing market sync...");
+      const marketTask = await syncMarketsQueued();
+      await waitForTask(marketTask.task_id);
+
+      setSyncStatus("Queueing news ingestion...");
+      const ingestionTask = await triggerIngestionQueued();
+      await waitForTask(ingestionTask.task_id);
+
+      setSyncStatus("Queueing clustering...");
+      const clusteringTask = await triggerClusteringQueued();
+      await waitForTask(clusteringTask.task_id);
+
+      setSyncStatus("Queueing nexus sync...");
+      const nexusTask = await syncNexusQueued();
+      await waitForTask(nexusTask.task_id);
+
+      setSyncStatus("Queueing alert generation...");
+      const alertTask = await generateAlertsV2Queued();
+      await waitForTask(alertTask.task_id);
+
+      setSyncStatus("Refreshing dashboard...");
       await loadData();
-    } catch (err) { console.error(err); } finally { setActionBusy(false); }
+    } catch (err) { console.error(err); } finally { setActionBusy(false); setSyncStatus(""); }
   };
 
   return (
@@ -194,9 +227,9 @@ export default function Home() {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-black">
                 <Shield size={22} />
               </div>
-              <h1 className="flex min-w-0 items-center gap-2 text-base font-black uppercase italic tracking-tighter sm:text-xl group cursor-pointer" onClick={() => handleAnalyzeTopic("")}>
-                <span className="truncate">GeoSyn</span>
-                <span className="truncate text-primary">Intelligence</span>
+              <h1 className="flex min-w-0 flex-wrap items-center gap-2 text-base font-black uppercase italic tracking-tighter sm:text-xl group cursor-pointer" onClick={() => handleAnalyzeTopic("")}>
+                <span className="wrap-balanced">GeoSyn</span>
+                <span className="wrap-balanced text-primary">Intelligence</span>
               </h1>
             </div>
 
@@ -237,7 +270,7 @@ export default function Home() {
             </nav>
 
             <div className="flex shrink-0 items-center gap-2 self-start sm:self-auto">
-               <button 
+              <button 
                   onClick={handleFullSync}
                   disabled={actionBusy}
                   className="px-3 md:px-4 py-2 bg-success/10 border border-success/20 text-success rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest hover:bg-success/20 transition-all flex items-center gap-1.5"
@@ -245,6 +278,11 @@ export default function Home() {
                   <Zap size={11} className={actionBusy ? 'animate-spin' : ''} />
                   <span className="hidden md:inline">{actionBusy ? 'Syncing...' : 'Sync'}</span>
               </button>
+              {syncStatus ? (
+                <span className="hidden max-w-[18rem] wrap-anywhere text-[8px] font-black uppercase tracking-widest text-text-muted md:inline">
+                  {syncStatus}
+                </span>
+              ) : null}
 
               <button 
                 onClick={toggleTheme}
@@ -332,7 +370,24 @@ export default function Home() {
                 )}
                 { activeView === "clusters" && (
                   <motion.div key="clusters" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                    <ClusterMap clusters={events} onAnalyze={handleAnalyzeTopic} />
+                    <div className="grid grid-cols-1 gap-6 2xl:grid-cols-12">
+                      <div className="2xl:col-span-7">
+                        <ClusterMap
+                          clusters={events}
+                          onAnalyze={handleAnalyzeTopic}
+                          onInspectEvent={setSelectedEventId}
+                          selectedEventId={selectedEventId}
+                        />
+                      </div>
+                      <div className="2xl:col-span-5">
+                        <EventDetailPanel
+                          eventId={selectedEventId}
+                          fallbackEvents={events as any[]}
+                          onClose={() => setSelectedEventId(null)}
+                          onAnalyze={handleAnalyzeTopic}
+                        />
+                      </div>
+                    </div>
                   </motion.div>
                 )}
                 {activeView === "glossary" && (
@@ -347,7 +402,7 @@ export default function Home() {
             <div className="xl:col-span-4 flex flex-col gap-6 xl:gap-10 min-w-0">
                <section className="glass-panel p-4 md:p-6 xl:sticky xl:top-24">
                   <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-                    <h3 className="text-[10px] font-black tracking-widest text-foreground uppercase">Market Correlation</h3>
+                    <h3 className="wrap-balanced text-[10px] font-black tracking-widest text-foreground uppercase">Market Correlation</h3>
                     <div className="flex flex-wrap gap-1">
                       {EXCHANGES.map(ex => (
                         <button 
@@ -379,9 +434,9 @@ export default function Home() {
 
         <footer className="mt-auto border-t border-border bg-panel-bg px-4 py-8 text-center md:px-8 md:py-12">
             <div className="flex flex-col items-center justify-center gap-3 opacity-30 sm:flex-row sm:gap-6">
-               <span className="text-[9px] font-black uppercase tracking-[0.35em]">GeoSyn Intelligence Framework v4.2.0</span>
+               <span className="wrap-balanced text-center text-[9px] font-black uppercase tracking-[0.35em]">GeoSyn Intelligence Framework v4.2.0</span>
                <div className="w-1 h-1 rounded-full bg-text-muted" />
-               <span className="text-[9px] font-black uppercase tracking-[0.35em]">Secure Terminal</span>
+               <span className="wrap-balanced text-center text-[9px] font-black uppercase tracking-[0.35em]">Secure Terminal</span>
             </div>
         </footer>
       </main>

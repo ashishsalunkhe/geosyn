@@ -1,0 +1,18 @@
+{
+  "ingested_at": "2026-04-22T01:20:59.710882",
+  "source": "fred",
+  "metadata": {
+    "external_id": "fred-DFF-2026-04-21",
+    "provider": "FRED"
+  },
+  "data": {
+    "id": "fred-DFF-2026-04-21",
+    "title": "Macro Signal: Federal Funds Effective Rate",
+    "content": "FRED reports Federal Funds Effective Rate at 5.3654 for period 2026-04-21.",
+    "url": "https://fred.stlouisfed.org/series/DFF",
+    "published_at": "2026-04-21",
+    "source": "FRED",
+    "raw_val": 5.3654,
+    "indicator_code": "DFF"
+  }
+}

@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Dict, Any, Optional
 from app.db.session import get_db
+from app.core.metrics import request_cache_hits_total, request_cache_misses_total
+from app.core.redis_client import cache_get_json, cache_set_json
 from app.services.timeline_service import TimelineService
 from app.services.explainability_service import ExplainabilityService
 from app.ingestion.gdelt_gkg_provider import GDELTGKGProvider
@@ -35,6 +37,13 @@ def get_live_intelligence(
     Returns a real-time feed of articles pulled locally from the RSS/OSINT ingestion graph.
     """
     try:
+        cache_key = f"intelligence-live:{query}:{limit}"
+        cached = cache_get_json(cache_key)
+        if cached is not None:
+            request_cache_hits_total.labels("intelligence.live").inc()
+            return cached
+        request_cache_misses_total.labels("intelligence.live").inc()
+
         # Use simple text matching for filtering
         query_terms = query.lower().replace("or", " ").replace("and", " ").split() if query else []
         
@@ -84,6 +93,7 @@ def get_live_intelligence(
                 })
                 
         results.sort(key=lambda x: x["seendate"], reverse=True)
+        cache_set_json(cache_key, results, ttl_seconds=120)
         return results
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -16,6 +16,7 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
+import { getStatusTone } from "@/lib/status-theme";
 
 interface TacticalSidebarProps {
   onFilterChange: (region: string, sector: string) => void;
@@ -66,15 +67,12 @@ const REGIONS = [
   { id: "AMER", label: "Americas" },
 ];
 
-const STATUS_CONFIG: Record<
-  string,
-  { icon: any; color: string; bg: string }
-> = {
-  CRITICAL: { icon: ShieldAlert, color: "text-error", bg: "bg-error/10 border-error/20" },
-  ACTIVE: { icon: TrendingUp, color: "text-success", bg: "bg-success/10 border-success/20" },
-  EMERGING: { icon: Zap, color: "text-info", bg: "bg-info/10 border-info/20" },
-  STABILIZED: { icon: Star, color: "text-text-muted", bg: "bg-text-muted/10 border-text-muted/20" },
-  RESOLVING: { icon: Star, color: "text-text-muted", bg: "bg-panel-bg border-border" },
+const STATUS_ICONS: Record<string, any> = {
+  CRITICAL: ShieldAlert,
+  ACTIVE: TrendingUp,
+  EMERGING: Zap,
+  STABILIZED: Star,
+  RESOLVING: Star,
 };
 
 export default function TacticalSidebar({
@@ -133,9 +131,8 @@ export default function TacticalSidebar({
         ) : (
           <div className="space-y-1.5 max-h-[220px] overflow-y-auto custom-scrollbar pr-1">
             {scenarios.slice(0, 6).map((s, idx) => {
-              const cfg =
-                STATUS_CONFIG[s.status] || STATUS_CONFIG["RESOLVING"];
-              const Icon = cfg.icon;
+              const tone = getStatusTone(s.status);
+              const Icon = STATUS_ICONS[s.status] || STATUS_ICONS["RESOLVING"];
               return (
                 <motion.button
                   key={s.id}
@@ -145,14 +142,14 @@ export default function TacticalSidebar({
                   onClick={() => onSelectScenario(s.topic)}
                   className="group flex w-full items-center gap-2.5 rounded-2xl border border-transparent px-3 py-2.5 text-left transition-all hover:border-border hover:bg-secondary"
                 >
-                  <div className={`p-1.5 rounded-xl border ${cfg.bg} shrink-0`}>
-                    <Icon size={10} className={cfg.color} />
+                  <div className={`p-1.5 rounded-xl border ${tone.soft} ${tone.border} shrink-0`}>
+                    <Icon size={10} className={tone.text} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="truncate text-[10px] font-black uppercase italic leading-tight text-foreground transition-colors group-hover:text-primary">
+                    <p className="wrap-pretty line-clamp-2 text-[10px] font-black uppercase italic leading-tight text-foreground transition-colors group-hover:text-primary">
                       {s.topic}
                     </p>
-                    <p className={`text-[7px] font-black uppercase tracking-widest ${cfg.color} mt-0.5`}>
+                    <p className={`text-[7px] font-black uppercase tracking-widest ${tone.text} mt-0.5`}>
                       {s.status}
                     </p>
                   </div>
@@ -200,7 +197,7 @@ export default function TacticalSidebar({
                         : "text-text-muted/40"
                     }
                   />
-                  <span className="truncate">{category.label}</span>
+                  <span className="wrap-anywhere leading-tight">{category.label}</span>
                 </div>
                 {expanded.includes(category.id) ? (
                   <ChevronDown size={11} />
@@ -240,7 +237,7 @@ export default function TacticalSidebar({
                                   : "bg-border group-hover:bg-text-muted"
                               }`}
                             />
-                            <span className="truncate">{child.label}</span>
+                            <span className="wrap-anywhere leading-tight">{child.label}</span>
                           </div>
                           {count > 0 && (
                             <span
@@ -295,7 +292,7 @@ export default function TacticalSidebar({
                         : "text-text-muted/40 group-hover:text-primary"
                     }
                   />
-                  <span className="truncate uppercase">{reg.label}</span>
+                  <span className="wrap-anywhere uppercase leading-tight">{reg.label}</span>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
                   {count > 0 && (

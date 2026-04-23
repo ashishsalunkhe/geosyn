@@ -8,8 +8,8 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision = "0003_v2_graph_risk_and_provenance"
-down_revision = "0002_v2_alerts_and_exposure"
+revision = "3_graph"
+down_revision = "2_alerts"
 branch_labels = None
 depends_on = None
 
@@ -18,7 +18,7 @@ def upgrade() -> None:
     op.create_table(
         "ingest_sources",
         sa.Column("id", sa.String(length=36), primary_key=True),
-        sa.Column("legacy_source_id", sa.Integer(), sa.ForeignKey("sources.id"), nullable=True),
+        sa.Column("legacy_source_id", sa.Integer(), nullable=True),
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("source_type", sa.String(), nullable=False),
         sa.Column("source_tier", sa.String(), nullable=True),
@@ -31,8 +31,7 @@ def upgrade() -> None:
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("name", name="uq_ingest_sources_name"),
-    )
+        sa.UniqueConstraint("name", name="uq_ingest_sources_name"))
     op.create_index("ix_ingest_sources_legacy_source_id", "ingest_sources", ["legacy_source_id"], unique=True)
     op.create_index("ix_ingest_sources_name", "ingest_sources", ["name"])
     op.create_index("ix_ingest_sources_source_type", "ingest_sources", ["source_type"])
@@ -43,7 +42,7 @@ def upgrade() -> None:
     op.create_table(
         "evidence_documents",
         sa.Column("id", sa.String(length=36), primary_key=True),
-        sa.Column("legacy_document_id", sa.Integer(), sa.ForeignKey("documents.id"), nullable=True),
+        sa.Column("legacy_document_id", sa.Integer(), nullable=True),
         sa.Column("source_id", sa.String(length=36), sa.ForeignKey("ingest_sources.id"), nullable=False),
         sa.Column("external_id", sa.String(), nullable=True),
         sa.Column("canonical_url", sa.String(), nullable=True),
@@ -59,8 +58,7 @@ def upgrade() -> None:
         sa.Column("raw_payload_ref", sa.String(), nullable=True),
         sa.Column("source_confidence", sa.Float(), nullable=True),
         sa.Column("metadata", sa.Text(), nullable=True),
-        sa.UniqueConstraint("source_id", "external_id", name="uq_evidence_documents_source_external_id"),
-    )
+        sa.UniqueConstraint("source_id", "external_id", name="uq_evidence_documents_source_external_id"))
     op.create_index("ix_evidence_documents_legacy_document_id", "evidence_documents", ["legacy_document_id"], unique=True)
     op.create_index("ix_evidence_documents_source_id", "evidence_documents", ["source_id"])
     op.create_index("ix_evidence_documents_title", "evidence_documents", ["title"])
@@ -80,8 +78,7 @@ def upgrade() -> None:
         sa.Column("start_offset", sa.Integer(), nullable=True),
         sa.Column("end_offset", sa.Integer(), nullable=True),
         sa.Column("metadata", sa.Text(), nullable=True),
-        sa.Column("created_at", sa.DateTime(), nullable=False),
-    )
+        sa.Column("created_at", sa.DateTime(), nullable=False))
     op.create_index("ix_document_fragments_document_id", "document_fragments", ["document_id"])
     op.create_index("ix_document_fragments_fragment_type", "document_fragments", ["fragment_type"])
 
@@ -95,8 +92,7 @@ def upgrade() -> None:
         sa.Column("confidence_score", sa.Float(), nullable=True),
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("document_id", "entity_id", "mention_text", name="uq_document_entities_doc_entity_mention"),
-    )
+        sa.UniqueConstraint("document_id", "entity_id", "mention_text", name="uq_document_entities_doc_entity_mention"))
     op.create_index("ix_document_entities_document_id", "document_entities", ["document_id"])
     op.create_index("ix_document_entities_entity_id", "document_entities", ["entity_id"])
     op.create_index("ix_document_entities_mention_role", "document_entities", ["mention_role"])
@@ -109,8 +105,7 @@ def upgrade() -> None:
         sa.Column("alias_type", sa.String(), nullable=True),
         sa.Column("language_code", sa.String(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("entity_id", "alias", name="uq_entity_aliases_entity_alias"),
-    )
+        sa.UniqueConstraint("entity_id", "alias", name="uq_entity_aliases_entity_alias"))
     op.create_index("ix_entity_aliases_entity_id", "entity_aliases", ["entity_id"])
     op.create_index("ix_entity_aliases_alias", "entity_aliases", ["alias"])
     op.create_index("ix_entity_aliases_alias_type", "entity_aliases", ["alias_type"])
@@ -127,8 +122,7 @@ def upgrade() -> None:
         sa.Column("source_document_id", sa.String(length=36), sa.ForeignKey("evidence_documents.id"), nullable=True),
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("source_entity_id", "target_entity_id", "relationship_type", name="uq_entity_relationships_edge"),
-    )
+        sa.UniqueConstraint("source_entity_id", "target_entity_id", "relationship_type", name="uq_entity_relationships_edge"))
     op.create_index("ix_entity_relationships_source_entity_id", "entity_relationships", ["source_entity_id"])
     op.create_index("ix_entity_relationships_target_entity_id", "entity_relationships", ["target_entity_id"])
     op.create_index("ix_entity_relationships_relationship_type", "entity_relationships", ["relationship_type"])
@@ -146,8 +140,7 @@ def upgrade() -> None:
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("port_code", name="uq_ports_port_code"),
-    )
+        sa.UniqueConstraint("port_code", name="uq_ports_port_code"))
     op.create_index("ix_ports_entity_id", "ports", ["entity_id"], unique=True)
     op.create_index("ix_ports_port_code", "ports", ["port_code"])
     op.create_index("ix_ports_port_name", "ports", ["port_name"])
@@ -163,8 +156,7 @@ def upgrade() -> None:
         sa.Column("destination_port_id", sa.String(length=36), sa.ForeignKey("ports.id"), nullable=True),
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), nullable=False),
-    )
+        sa.Column("updated_at", sa.DateTime(), nullable=False))
     op.create_index("ix_routes_entity_id", "routes", ["entity_id"], unique=True)
     op.create_index("ix_routes_route_name", "routes", ["route_name"])
     op.create_index("ix_routes_route_type", "routes", ["route_type"])
@@ -181,8 +173,7 @@ def upgrade() -> None:
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
-        sa.UniqueConstraint("commodity_code", name="uq_commodities_commodity_code"),
-    )
+        sa.UniqueConstraint("commodity_code", name="uq_commodities_commodity_code"))
     op.create_index("ix_commodities_entity_id", "commodities", ["entity_id"], unique=True)
     op.create_index("ix_commodities_commodity_code", "commodities", ["commodity_code"])
     op.create_index("ix_commodities_commodity_name", "commodities", ["commodity_name"])
@@ -198,8 +189,7 @@ def upgrade() -> None:
         sa.Column("criticality_score", sa.Float(), nullable=True),
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), nullable=False),
-    )
+        sa.Column("updated_at", sa.DateTime(), nullable=False))
     op.create_index("ix_customer_assets_customer_id", "customer_assets", ["customer_id"])
     op.create_index("ix_customer_assets_entity_id", "customer_assets", ["entity_id"])
     op.create_index("ix_customer_assets_asset_label", "customer_assets", ["asset_label"])
@@ -217,8 +207,7 @@ def upgrade() -> None:
         sa.Column("rationale_text", sa.Text(), nullable=True),
         sa.Column("scored_at", sa.DateTime(), nullable=False),
         sa.Column("metadata", sa.Text(), nullable=True),
-        sa.UniqueConstraint("event_id", "customer_id", "score_type", name="uq_risk_scores_event_customer_type"),
-    )
+        sa.UniqueConstraint("event_id", "customer_id", "score_type", name="uq_risk_scores_event_customer_type"))
     op.create_index("ix_risk_scores_event_id", "risk_scores", ["event_id"])
     op.create_index("ix_risk_scores_customer_id", "risk_scores", ["customer_id"])
     op.create_index("ix_risk_scores_score_type", "risk_scores", ["score_type"])
@@ -237,8 +226,7 @@ def upgrade() -> None:
         sa.Column("notes", sa.Text(), nullable=True),
         sa.Column("labeled_by", sa.String(), nullable=True),
         sa.Column("labeled_at", sa.DateTime(), nullable=False),
-        sa.Column("metadata", sa.Text(), nullable=True),
-    )
+        sa.Column("metadata", sa.Text(), nullable=True))
     op.create_index("ix_evaluation_labels_event_id", "evaluation_labels", ["event_id"])
     op.create_index("ix_evaluation_labels_customer_id", "evaluation_labels", ["customer_id"])
     op.create_index("ix_evaluation_labels_alert_id", "evaluation_labels", ["alert_id"])

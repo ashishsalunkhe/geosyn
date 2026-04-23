@@ -15,6 +15,7 @@ from app.ingestion.world_bank_provider import WorldBankProvider
 from app.ingestion.fred_provider import FREDProvider
 from app.ingestion.sanctions_provider import SanctionsProvider
 from app.services.provenance_service_v2 import ProvenanceServiceV2
+from app.core.metrics import ingestion_documents_total, ingestion_runs_total
 
 class IngestionService:
     def __init__(self, db: Session):
@@ -65,6 +66,8 @@ class IngestionService:
             ingested.append(new_doc)
             
         self.db.commit()
+        ingestion_runs_total.labels("osint").inc()
+        ingestion_documents_total.labels("osint").inc(len(ingested))
         return ingested
 
     async def ingest_institutional_macro(self):
@@ -251,4 +254,6 @@ class IngestionService:
             ingested_docs.append(new_doc)
         
         self.db.commit()
+        ingestion_runs_total.labels(provider.provider_name).inc()
+        ingestion_documents_total.labels(provider.provider_name).inc(len(ingested_docs))
         return ingested_docs

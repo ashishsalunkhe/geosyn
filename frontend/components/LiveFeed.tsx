@@ -70,7 +70,7 @@ export default function LiveFeed({ onAnalyze }: LiveFeedProps) {
                     }`} />
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-[10px] font-black text-text-muted uppercase tracking-widest truncate">
+                        <span className="wrap-anywhere text-[10px] font-black text-text-muted uppercase tracking-widest">
                           {art.source || "GLOBAL MONITOR"}
                         </span>
                         <div className="flex items-center gap-1">

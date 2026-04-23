@@ -1,0 +1,18 @@
+{
+  "ingested_at": "2026-04-22T01:20:59.746617",
+  "source": "fred",
+  "metadata": {
+    "external_id": "fred-PAYEMS-2026-04-21",
+    "provider": "FRED"
+  },
+  "data": {
+    "id": "fred-PAYEMS-2026-04-21",
+    "title": "Macro Signal: Nonfarm Payrolls (BLS)",
+    "content": "FRED reports Nonfarm Payrolls (BLS) at 158000.1299 for period 2026-04-21.",
+    "url": "https://fred.stlouisfed.org/series/PAYEMS",
+    "published_at": "2026-04-21",
+    "source": "FRED",
+    "raw_val": 158000.1299,
+    "indicator_code": "PAYEMS"
+  }
+}

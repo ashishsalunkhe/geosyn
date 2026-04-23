@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Zap, AlertTriangle, ShieldCheck, Activity, TrendingUp } from "lucide-react";
+import { getStatusTone } from "@/lib/status-theme";
 
 interface ScenarioHUDProps {
   scenarios: any[];
@@ -13,10 +14,10 @@ export default function ScenarioHUD({ scenarios }: ScenarioHUDProps) {
 
   const TILES = [
     { label: "Total Tracked", val: scenarios.length, icon: Activity, color: "text-foreground", bg: "bg-foreground/5" },
-    { label: "Emerging Risks", val: getCount("EMERGING"), icon: Zap, color: "text-info", bg: "bg-info/10" },
-    { label: "Active Crises", val: getCount("ACTIVE"), icon: TrendingUp, color: "text-success", bg: "bg-success/10" },
-    { label: "Critical Alerts", val: getCount("CRITICAL"), icon: AlertTriangle, color: "text-error", bg: "bg-error/10" },
-    { label: "Stabilized", val: getCount("STABILIZED") + getCount("RESOLVING"), icon: ShieldCheck, color: "text-text-muted", bg: "bg-text-muted/10" },
+    { label: "Emerging Risks", val: getCount("EMERGING"), icon: Zap, color: getStatusTone("EMERGING").text, soft: getStatusTone("EMERGING").soft, border: getStatusTone("EMERGING").border },
+    { label: "Active Crises", val: getCount("ACTIVE"), icon: TrendingUp, color: getStatusTone("ACTIVE").text, soft: getStatusTone("ACTIVE").soft, border: getStatusTone("ACTIVE").border },
+    { label: "Critical Alerts", val: getCount("CRITICAL"), icon: AlertTriangle, color: getStatusTone("CRITICAL").text, soft: getStatusTone("CRITICAL").soft, border: getStatusTone("CRITICAL").border },
+    { label: "Stabilized", val: getCount("STABILIZED") + getCount("RESOLVING"), icon: ShieldCheck, color: getStatusTone("STABILIZED").text, soft: getStatusTone("STABILIZED").soft, border: getStatusTone("STABILIZED").border },
   ];
 
   return (
@@ -34,7 +35,7 @@ export default function ScenarioHUD({ scenarios }: ScenarioHUDProps) {
             <div className="text-xl font-black text-foreground italic tracking-tight">{tile.val}</div>
           </div>
           
-          <div className={`p-2.5 rounded-xl ${tile.bg} border border-border/40`}>
+          <div className={`p-2.5 rounded-xl ${"soft" in tile ? tile.soft : tile.bg} border ${"border" in tile ? tile.border : "border-border/40"}`}>
             <tile.icon size={16} className={tile.color} />
           </div>
         </motion.div>

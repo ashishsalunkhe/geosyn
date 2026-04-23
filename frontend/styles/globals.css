@@ -3,18 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --background: #020617;
-  --foreground: #f8fafc;
-  --primary: #0ed3cf;
-  --primary-dark: #08a3a0;
-  --secondary: #0f172a;
-  --border: rgba(255, 255, 255, 0.08);
-  --text-muted: #94a3b8;
-  --panel-bg: rgba(15, 23, 42, 0.6);
-  --hazard: #f59e0b;
-  --success: #48bb78;
-  --error: #f56565;
-  --info: #63b3ed;
+  --background: #101214;
+  --foreground: #f3f1f4;
+  --primary: #f73bac;
+  --primary-dark: #c40879;
+  --secondary: #160e11;
+  --border: rgba(216, 192, 201, 0.16);
+  --text-muted: #a9b2bc;
+  --panel-bg: rgba(22, 14, 17, 0.82);
+  --hazard: #b18193;
+  --success: #82a8b0;
+  --error: #f96cc1;
+  --info: #a28ea4;
 }
 
 .light {
@@ -70,6 +70,32 @@
   .light .tactical-btn-primary {
     @apply bg-primary text-white shadow-lg;
     box-shadow: 0 10px 15px -3px rgba(8, 145, 178, 0.1), 0 4px 6px -4px rgba(8, 145, 178, 0.1);
+  }
+}
+
+@layer utilities {
+  .wrap-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .wrap-balanced {
+    text-wrap: balance;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .label-wrap {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+  }
+
+  .wrap-pretty {
+    text-wrap: pretty;
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: none;
   }
 }
 

@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-22T04:50:43.837311",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/cn4vk13wgwwo?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/cn4vk13wgwwo?at_medium=RSS&at_campaign=rss",
+    "title": "Phone tracking shows how Colombian mercenaries backed Sudan's RSF - report",
+    "content": "The Conflict Insights Group (CIG) says its research also shows the extent of UAE involvement.",
+    "url": "https://www.bbc.com/news/articles/cn4vk13wgwwo?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-22T05:01:50Z",
+    "tone": -3.5,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

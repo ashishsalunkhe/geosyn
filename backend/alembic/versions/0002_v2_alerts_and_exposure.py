@@ -8,8 +8,8 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision = "0002_v2_alerts_and_exposure"
-down_revision = "0001_v2_foundation"
+revision = "2_alerts"
+down_revision = "1_foundation"
 branch_labels = None
 depends_on = None
 
@@ -26,8 +26,7 @@ def upgrade() -> None:
         sa.Column("criticality_score", sa.Float(), nullable=True),
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), nullable=False),
-    )
+        sa.Column("updated_at", sa.DateTime(), nullable=False))
     op.create_index("ix_suppliers_customer_id", "suppliers", ["customer_id"])
     op.create_index("ix_suppliers_entity_id", "suppliers", ["entity_id"])
     op.create_index("ix_suppliers_supplier_name", "suppliers", ["supplier_name"])
@@ -46,8 +45,7 @@ def upgrade() -> None:
         sa.Column("criticality_score", sa.Float(), nullable=True),
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), nullable=False),
-    )
+        sa.Column("updated_at", sa.DateTime(), nullable=False))
     op.create_index("ix_facilities_customer_id", "facilities", ["customer_id"])
     op.create_index("ix_facilities_entity_id", "facilities", ["entity_id"])
     op.create_index("ix_facilities_facility_name", "facilities", ["facility_name"])
@@ -69,8 +67,7 @@ def upgrade() -> None:
         sa.Column("resolved_at", sa.DateTime(), nullable=True),
         sa.Column("metadata", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), nullable=False),
-    )
+        sa.Column("updated_at", sa.DateTime(), nullable=False))
     op.create_index("ix_alerts_v2_customer_id", "alerts_v2", ["customer_id"])
     op.create_index("ix_alerts_v2_event_id", "alerts_v2", ["event_id"])
     op.create_index("ix_alerts_v2_alert_type", "alerts_v2", ["alert_type"])
@@ -82,11 +79,10 @@ def upgrade() -> None:
         "alert_evidence",
         sa.Column("id", sa.Integer(), primary_key=True),
         sa.Column("alert_id", sa.String(length=36), sa.ForeignKey("alerts_v2.id"), nullable=False),
-        sa.Column("legacy_document_id", sa.Integer(), sa.ForeignKey("documents.id"), nullable=False),
+        sa.Column("legacy_document_id", sa.Integer(), nullable=False),
         sa.Column("evidence_type", sa.String(), nullable=True),
         sa.Column("relevance_score", sa.Float(), nullable=True),
-        sa.Column("created_at", sa.DateTime(), nullable=False),
-    )
+        sa.Column("created_at", sa.DateTime(), nullable=False))
     op.create_index("ix_alert_evidence_alert_id", "alert_evidence", ["alert_id"])
     op.create_index("ix_alert_evidence_legacy_document_id", "alert_evidence", ["legacy_document_id"])
 
@@ -98,8 +94,7 @@ def upgrade() -> None:
         sa.Column("actor_id", sa.String(), nullable=True),
         sa.Column("notes", sa.Text(), nullable=True),
         sa.Column("metadata", sa.Text(), nullable=True),
-        sa.Column("created_at", sa.DateTime(), nullable=False),
-    )
+        sa.Column("created_at", sa.DateTime(), nullable=False))
     op.create_index("ix_alert_actions_alert_id", "alert_actions", ["alert_id"])
     op.create_index("ix_alert_actions_action_type", "alert_actions", ["action_type"])
 

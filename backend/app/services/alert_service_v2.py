@@ -6,9 +6,19 @@ from sqlalchemy.orm import Session
 
 from app.models.v2 import AlertActionV2, AlertEvidenceV2, AlertV2, CustomerV2, EventEvidenceV2
 from app.services.event_service_v2 import EventServiceV2
+from app.core.metrics import alerts_generated_total
 
 
 class AlertServiceV2:
+    STATUS_TRANSITIONS = {
+        "new": {"review", "monitor", "escalated", "dismissed", "mitigated"},
+        "review": {"monitor", "escalated", "dismissed", "mitigated"},
+        "monitor": {"review", "escalated", "dismissed", "mitigated"},
+        "escalated": {"monitor", "dismissed", "mitigated"},
+        "dismissed": set(),
+        "mitigated": set(),
+    }
+
     def __init__(self, db: Session):
         self.db = db
         self.event_service = EventServiceV2(db)
@@ -76,12 +86,15 @@ class AlertServiceV2:
             created += 1
 
         self.db.commit()
+        alerts_generated_total.labels(customer.slug).inc(created)
         return {"created": created, "reused": reused}
 
-    def list_alerts(self, customer_id: str, limit: int = 50) -> List[AlertV2]:
+    def list_alerts(self, customer_id: str, limit: int = 50, status: Optional[str] = None) -> List[AlertV2]:
+        query = self.db.query(AlertV2).filter(AlertV2.customer_id == customer_id)
+        if status:
+            query = query.filter(AlertV2.status == status)
         return (
-            self.db.query(AlertV2)
-            .filter(AlertV2.customer_id == customer_id)
+            query
             .order_by(AlertV2.triggered_at.desc())
             .limit(limit)
             .all()
@@ -120,24 +133,67 @@ class AlertServiceV2:
             )
         return result
 
+    def list_actions(self, alert_id: str, customer_id: str) -> List[Dict[str, object]]:
+        alert = self.get_alert(alert_id, customer_id)
+        if not alert:
+            return []
+        rows = (
+            self.db.query(AlertActionV2)
+            .filter(AlertActionV2.alert_id == alert.id)
+            .order_by(AlertActionV2.created_at.asc())
+            .all()
+        )
+        return [
+            {
+                "id": row.id,
+                "action_type": row.action_type,
+                "actor_id": row.actor_id,
+                "notes": row.notes,
+                "created_at": row.created_at.isoformat(),
+            }
+            for row in rows
+        ]
+
     def add_action(self, alert_id: str, customer_id: str, action_type: str, actor_id: Optional[str], notes: Optional[str]) -> Dict[str, str]:
         alert = self.get_alert(alert_id, customer_id)
         if not alert:
             raise ValueError("Alert not found")
 
+        normalized_action = action_type.strip().lower()
+        if normalized_action not in {"review", "monitor", "escalated", "dismissed", "mitigated"}:
+            raise ValueError(f"Unsupported alert action '{action_type}'")
+
+        current_status = (alert.status or "new").lower()
+        allowed = self.STATUS_TRANSITIONS.get(current_status, set())
+        if normalized_action not in allowed:
+            raise ValueError(
+                f"Action '{normalized_action}' is not allowed when alert status is '{current_status}'"
+            )
+
         action = AlertActionV2(
             alert_id=alert.id,
-            action_type=action_type,
+            action_type=normalized_action,
             actor_id=actor_id,
             notes=notes,
             created_at=datetime.utcnow(),
         )
         self.db.add(action)
-        if action_type in {"dismissed", "mitigated", "review", "escalated", "monitor"}:
-            alert.status = action_type if action_type != "dismissed" else "dismissed"
-            alert.updated_at = datetime.utcnow()
+        alert.status = normalized_action
+        alert.updated_at = datetime.utcnow()
+        if normalized_action in {"dismissed", "mitigated"}:
+            alert.resolved_at = datetime.utcnow()
+        else:
+            alert.resolved_at = None
         self.db.commit()
-        return {"status": "ok", "action_type": action_type}
+        return {"status": "ok", "action_type": normalized_action, "alert_status": alert.status}
+
+    def workflow_config(self) -> Dict[str, object]:
+        return {
+            "initial_status": "new",
+            "terminal_statuses": ["dismissed", "mitigated"],
+            "allowed_actions": ["review", "monitor", "escalated", "dismissed", "mitigated"],
+            "transitions": {status: sorted(actions) for status, actions in self.STATUS_TRANSITIONS.items()},
+        }
 
     @staticmethod
     def _derive_severity(match: Dict[str, object]) -> str:

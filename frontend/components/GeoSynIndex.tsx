@@ -125,7 +125,7 @@ export default function GeoSynIndex({ data, onSelectTopic }: GeoSynIndexProps) {
                     <span className="text-xl font-black text-hazard">+{s.gap}</span>
                   </div>
                 </div>
-                <h4 className="text-sm font-black text-foreground uppercase tracking-tight mb-2 truncate">{s.topic}</h4>
+                <h4 className="wrap-anywhere text-sm font-black text-foreground uppercase tracking-tight mb-2">{s.topic}</h4>
                 <p className="text-[10px] text-text-muted leading-tight mb-4">
                   Critical blind spot detected. Causal complexity in the Nexus is high, but market/news attention remains abnormally low.
                 </p>
@@ -157,7 +157,7 @@ export default function GeoSynIndex({ data, onSelectTopic }: GeoSynIndexProps) {
                  <div className="text-[10px] font-black text-text-muted opacity-20 w-4 italic">{idx + 1}</div>
                  <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-[9px] font-black text-foreground uppercase tracking-tight truncate group-hover:text-primary transition-colors">{s.topic}</span>
+                      <span className="wrap-anywhere text-[9px] font-black text-foreground uppercase tracking-tight group-hover:text-primary transition-colors">{s.topic}</span>
                       <span className="text-[10px] font-black text-primary italic">{s.riskScore}</span>
                     </div>
                     <div className="h-1 w-full bg-border rounded-full overflow-hidden">
@@ -189,7 +189,7 @@ export default function GeoSynIndex({ data, onSelectTopic }: GeoSynIndexProps) {
         {scores.slice(0, 4).map((s, idx) => (
           <div key={idx} className="glass-panel p-5 bg-panel-bg shadow-sm">
               <div className="flex items-start justify-between mb-4 gap-4">
-                <span className="text-[10px] font-black text-foreground uppercase tracking-wider leading-tight flex-1">{s.topic}</span>
+                <span className="wrap-anywhere text-[10px] font-black text-foreground uppercase tracking-wider leading-tight flex-1">{s.topic}</span>
                 <BarChart3 size={14} className="text-primary opacity-60 shrink-0" />
               </div>
              <div className="grid grid-cols-2 gap-y-4 gap-x-6">

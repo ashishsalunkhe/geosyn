@@ -88,6 +88,19 @@ export interface EventEvaluationLabel {
   metadata?: Record<string, unknown> | null;
 }
 
+export interface EventExposureExplanation {
+  event_id: string;
+  matched_watchlists: Array<{
+    watchlist_id: string;
+    entity_id?: string | null;
+    item_type: string;
+    criticality_score?: number | null;
+  }>;
+  exposure_matches: EventExposureMatch[];
+  summary?: string | null;
+  risk_score?: EventRiskScore | null;
+}
+
 export interface EventV2 {
   id: string;
   canonical_title: string;
@@ -133,6 +146,58 @@ export interface AlertV2 {
   } | null;
 }
 
+export interface AlertActionV2 {
+  id: number;
+  action_type: string;
+  actor_id?: string | null;
+  notes?: string | null;
+  created_at: string;
+}
+
+export interface CustomerOverview {
+  customer: {
+    id: string;
+    name: string;
+    slug: string;
+    industry?: string | null;
+    primary_region?: string | null;
+  };
+  counts: Record<string, number>;
+  onboarding: {
+    has_customer_profile: boolean;
+    has_watchlists: boolean;
+    has_watchlist_items: boolean;
+    has_exposure_links: boolean;
+    ready_for_exposure_alerting: boolean;
+  };
+}
+
+export interface WatchlistItemV2 {
+  id: string;
+  entity_id?: string | null;
+  canonical_name?: string | null;
+  display_name?: string | null;
+  entity_type?: string | null;
+  item_type: string;
+  criticality_score?: number | null;
+}
+
+export interface WatchlistV2 {
+  id: string;
+  name: string;
+  watchlist_type?: string | null;
+  is_default: boolean;
+  item_count: number;
+  items: WatchlistItemV2[];
+}
+
+export interface OpsTaskStatus {
+  task_id: string;
+  status: string;
+  result?: Record<string, unknown> | null;
+  error?: string | null;
+}
+
 export async function fetchDocuments() {
   return fetchJson(`${API_BASE_URL}/documents/`);
 }
@@ -151,6 +216,10 @@ export async function fetchEventV2(eventId: string): Promise<EventV2> {
 
 export async function fetchEventTimeline(eventId: string): Promise<EventTimelineItem[]> {
   return fetchJson(`${API_BASE_URL}/events/v2/${eventId}/timeline`);
+}
+
+export async function fetchEventExposure(eventId: string): Promise<EventExposureExplanation> {
+  return fetchJson(`${API_BASE_URL}/events/v2/${eventId}/exposure`);
 }
 
 export async function fetchEventRisk(eventId: string): Promise<EventRiskScore | { detail: string }> {
@@ -173,6 +242,10 @@ export async function triggerIngestion() {
   return fetchJson(`${API_BASE_URL}/ingestion/trigger`, { method: "POST" });
 }
 
+export async function triggerIngestionQueued() {
+  return fetchJson(`${API_BASE_URL}/ingestion/trigger?enqueue=true`, { method: "POST" });
+}
+
 export async function triggerComplianceIngestion(query = "") {
   const url = new URL(`${API_BASE_URL}/ingestion/compliance`);
   if (query) {
@@ -181,8 +254,30 @@ export async function triggerComplianceIngestion(query = "") {
   return fetchJson(url.toString(), { method: "POST" });
 }
 
+export async function validateExposureCsv(file: File) {
+  const form = new FormData();
+  form.append("file", file);
+  return fetchJson(`${API_BASE_URL}/ingestion/exposure/csv/validate`, {
+    method: "POST",
+    body: form,
+  });
+}
+
+export async function importExposureCsv(file: File) {
+  const form = new FormData();
+  form.append("file", file);
+  return fetchJson(`${API_BASE_URL}/ingestion/exposure/csv`, {
+    method: "POST",
+    body: form,
+  });
+}
+
 export async function triggerClustering() {
   return fetchJson(`${API_BASE_URL}/clustering/trigger`, { method: "POST" });
+}
+
+export async function triggerClusteringQueued() {
+  return fetchJson(`${API_BASE_URL}/clustering/trigger?enqueue=true`, { method: "POST" });
 }
 
 export async function fetchScenarios(region?: string, sector?: string) {
@@ -236,6 +331,10 @@ export async function syncMarkets() {
   return fetchJson(`${API_BASE_URL}/markets/sync`, { method: "POST" });
 }
 
+export async function syncMarketsQueued() {
+  return fetchJson(`${API_BASE_URL}/markets/sync?enqueue=true`, { method: "POST" });
+}
+
 export async function fetchAlerts() {
   return fetchJson(`${API_BASE_URL}/alerts/`);
 }
@@ -244,8 +343,16 @@ export async function fetchAlertsV2(limit = 25): Promise<AlertV2[]> {
   return fetchJson(`${API_BASE_URL}/alerts/v2?limit=${limit}`);
 }
 
+export async function fetchAlertsV2ByStatus(status: string, limit = 25): Promise<AlertV2[]> {
+  return fetchJson(`${API_BASE_URL}/alerts/v2?status=${encodeURIComponent(status)}&limit=${limit}`);
+}
+
 export async function generateAlertsV2() {
   return fetchJson(`${API_BASE_URL}/alerts/v2/generate`, { method: "POST" });
+}
+
+export async function generateAlertsV2Queued() {
+  return fetchJson(`${API_BASE_URL}/alerts/v2/generate?enqueue=true`, { method: "POST" });
 }
 
 export async function fetchAlertV2(alertId: string): Promise<AlertV2> {
@@ -256,11 +363,52 @@ export async function fetchAlertEvidenceV2(alertId: string) {
   return fetchJson(`${API_BASE_URL}/alerts/v2/${alertId}/evidence`);
 }
 
+export async function fetchAlertActionsV2(alertId: string): Promise<AlertActionV2[]> {
+  return fetchJson(`${API_BASE_URL}/alerts/v2/${alertId}/actions`);
+}
+
+export async function fetchAlertWorkflowConfig() {
+  return fetchJson(`${API_BASE_URL}/alerts/v2/workflow/config`);
+}
+
 export async function addAlertActionV2(alertId: string, payload: { action_type: string; actor_id?: string; notes?: string }) {
   return fetchJson(`${API_BASE_URL}/alerts/v2/${alertId}/actions`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
+  });
+}
+
+export async function fetchCurrentCustomer(): Promise<CustomerOverview> {
+  return fetchJson(`${API_BASE_URL}/customers/me`);
+}
+
+export async function fetchWatchlists(): Promise<WatchlistV2[]> {
+  return fetchJson(`${API_BASE_URL}/watchlists/`);
+}
+
+export async function createWatchlist(payload: { name: string; watchlist_type?: string; is_default?: boolean }) {
+  return fetchJson(`${API_BASE_URL}/watchlists/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function addWatchlistItem(
+  watchlistId: string,
+  payload: { canonical_name: string; entity_type?: string; item_type?: string; criticality_score?: number },
+) {
+  return fetchJson(`${API_BASE_URL}/watchlists/${watchlistId}/items`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteWatchlistItem(itemId: string) {
+  return fetchJson(`${API_BASE_URL}/watchlists/items/${itemId}`, {
+    method: "DELETE",
   });
 }
 
@@ -274,6 +422,29 @@ export async function fetchNexusGraph() {
 
 export async function syncNexus() {
   return fetchJson(`${API_BASE_URL}/nexus/sync`, { method: "POST" });
+}
+
+export async function syncNexusQueued() {
+  return fetchJson(`${API_BASE_URL}/nexus/sync?enqueue=true`, { method: "POST" });
+}
+
+export async function fetchOpsTaskStatus(taskId: string): Promise<OpsTaskStatus> {
+  return fetchJson(`${API_BASE_URL}/ops/tasks/${taskId}`);
+}
+
+export async function waitForTask(taskId: string, timeoutMs = 120000, pollIntervalMs = 1500): Promise<OpsTaskStatus> {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    const status = await fetchOpsTaskStatus(taskId);
+    if (status.status === "SUCCESS") {
+      return status;
+    }
+    if (status.status === "FAILURE") {
+      throw new Error(status.error || `Task ${taskId} failed`);
+    }
+    await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+  }
+  throw new Error(`Task ${taskId} timed out after ${timeoutMs}ms`);
 }
 
 export async function fetchIntelligenceBrief(topic: string, ticker?: string) {

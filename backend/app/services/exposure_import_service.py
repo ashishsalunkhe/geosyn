@@ -30,6 +30,75 @@ class ExposureImportService:
     def __init__(self, db: Session):
         self.db = db
 
+    def validate_csv(self, csv_text: str, customer_id: str, preview_limit: int = 10) -> Dict[str, object]:
+        reader = csv.DictReader(io.StringIO(csv_text))
+        if not reader.fieldnames:
+            raise ValueError("CSV file is empty or missing a header row.")
+
+        missing = self.REQUIRED_COLUMNS - set(reader.fieldnames)
+        if missing:
+            raise ValueError(f"CSV missing required columns: {', '.join(sorted(missing))}")
+
+        errors: List[str] = []
+        warnings: List[str] = []
+        row_count = 0
+        supported_rows = 0
+        duplicate_rows = 0
+        preview_rows: List[Dict[str, object]] = []
+
+        for index, row in enumerate(reader, start=2):
+            row_count += 1
+            normalized = self._normalize_row(row)
+            try:
+                self._validate_row(normalized)
+                supported_rows += 1
+                duplicate = self._exposure_exists(
+                    customer_id=customer_id,
+                    source_object_type=normalized["source_object_type"],
+                    source_object_id=normalized["source_object_id"],
+                    relationship_type=normalized["relationship_type"],
+                    target_entity_name=normalized["target_entity_name"],
+                    target_entity_type=normalized["target_entity_type"],
+                )
+                duplicate_rows += int(duplicate)
+                if duplicate:
+                    warnings.append(
+                        f"row {index}: exposure link already exists for "
+                        f"{normalized['source_object_type']}:{normalized['source_object_id']} "
+                        f"-> {normalized['target_entity_name']}"
+                    )
+                if len(preview_rows) < preview_limit:
+                    preview_rows.append(
+                        {
+                            "row_number": index,
+                            **normalized,
+                            "duplicate": duplicate,
+                        }
+                    )
+            except Exception as exc:  # noqa: BLE001
+                errors.append(f"row {index}: {exc}")
+                if len(preview_rows) < preview_limit:
+                    preview_rows.append(
+                        {
+                            "row_number": index,
+                            **normalized,
+                            "duplicate": False,
+                            "error": str(exc),
+                        }
+                    )
+
+        return {
+            "row_count": row_count,
+            "supported_rows": supported_rows,
+            "duplicate_rows": duplicate_rows,
+            "error_count": len(errors),
+            "warning_count": len(warnings),
+            "preview_rows": preview_rows,
+            "errors": errors,
+            "warnings": warnings[:25],
+            "supported_source_object_types": sorted(["supplier", "facility", "port", "route", "commodity", "customer_asset"]),
+        }
+
     def import_csv(self, csv_text: str, customer_id: str) -> Dict[str, object]:
         reader = csv.DictReader(io.StringIO(csv_text))
         if not reader.fieldnames:
@@ -51,14 +120,14 @@ class ExposureImportService:
 
         for index, row in enumerate(reader, start=2):
             try:
-                source_object_type = (row.get("source_object_type") or "").strip().lower()
-                source_object_id = (row.get("source_object_id") or "").strip()
-                relationship_type = (row.get("relationship_type") or "").strip()
-                target_entity_name = (row.get("target_entity_name") or "").strip()
-                target_entity_type = (row.get("target_entity_type") or "company").strip().lower()
+                normalized = self._normalize_row(row)
+                self._validate_row(normalized)
 
-                if not source_object_type or not source_object_id or not relationship_type or not target_entity_name:
-                    raise ValueError("required value missing")
+                source_object_type = normalized["source_object_type"]
+                source_object_id = normalized["source_object_id"]
+                relationship_type = normalized["relationship_type"]
+                target_entity_name = normalized["target_entity_name"]
+                target_entity_type = normalized["target_entity_type"]
 
                 target_entity = self._get_or_create_entity(target_entity_name, target_entity_type)
 
@@ -122,6 +191,51 @@ class ExposureImportService:
             "created_relationships": created_relationships,
             "errors": errors,
         }
+
+    def _normalize_row(self, row: Dict[str, str]) -> Dict[str, str]:
+        return {
+            "source_object_type": (row.get("source_object_type") or "").strip().lower(),
+            "source_object_id": (row.get("source_object_id") or "").strip(),
+            "relationship_type": (row.get("relationship_type") or "").strip(),
+            "target_entity_name": (row.get("target_entity_name") or "").strip(),
+            "target_entity_type": (row.get("target_entity_type") or "company").strip().lower(),
+        }
+
+    def _validate_row(self, normalized: Dict[str, str]) -> None:
+        if not normalized["source_object_type"] or not normalized["source_object_id"] or not normalized["relationship_type"] or not normalized["target_entity_name"]:
+            raise ValueError("required value missing")
+        if normalized["source_object_type"] not in {"supplier", "facility", "port", "route", "commodity", "customer_asset", "asset"}:
+            raise ValueError(f"unsupported source_object_type '{normalized['source_object_type']}'")
+
+    def _exposure_exists(
+        self,
+        *,
+        customer_id: str,
+        source_object_type: str,
+        source_object_id: str,
+        relationship_type: str,
+        target_entity_name: str,
+        target_entity_type: str,
+    ) -> bool:
+        target_entity = (
+            self.db.query(EntityV2)
+            .filter(EntityV2.canonical_name == target_entity_name, EntityV2.entity_type == target_entity_type)
+            .first()
+        )
+        if not target_entity:
+            return False
+        existing = (
+            self.db.query(ExposureLinkV2)
+            .filter(
+                ExposureLinkV2.customer_id == customer_id,
+                ExposureLinkV2.source_object_type == source_object_type,
+                ExposureLinkV2.source_object_id == source_object_id,
+                ExposureLinkV2.relationship_type == relationship_type,
+                ExposureLinkV2.target_entity_id == target_entity.id,
+            )
+            .first()
+        )
+        return existing is not None
 
     def _get_or_create_entity(self, name: str, entity_type: str) -> EntityV2:
         entity = (

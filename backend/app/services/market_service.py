@@ -5,6 +5,9 @@ from app.models.domain import MarketSeries, MarketPoint, EventCluster, Document,
 from app.ingestion.yahoo_market_provider import YahooMarketProvider
 from app.services.sentiment_service import SentimentService
 from app.core.tickers import ALL_TRACKED_TICKERS
+from app.core.metrics import market_sync_runs_total
+from app.core.metrics import request_cache_hits_total, request_cache_misses_total
+from app.core.redis_client import cache_get_json, cache_set_json
 
 import asyncio
 
@@ -18,6 +21,7 @@ class MarketService:
         Fetches latest points for all tracked tickers and detects volatility shocks.
         """
         print(f"GeoSyn: Syncing {len(ALL_TRACKED_TICKERS)} tickers...")
+        market_sync_runs_total.inc()
         
         # To avoid rate limits, we process in chunks or rely on threaded calls
         for ticker_symbol in ALL_TRACKED_TICKERS:
@@ -113,6 +117,13 @@ class MarketService:
         """
         Correlates market points with event clusters.
         """
+        cache_key = f"market-correlation:{ticker}"
+        cached = cache_get_json(cache_key)
+        if cached is not None:
+            request_cache_hits_total.labels("markets.correlation").inc()
+            return cached
+        request_cache_misses_total.labels("markets.correlation").inc()
+
         series = self.db.query(MarketSeries).filter(MarketSeries.ticker == ticker).first()
         if not series:
             return {"ticker": ticker, "points": [], "shocks": []}
@@ -137,8 +148,10 @@ class MarketService:
                     "intensity": intensity
                 })
                 
-        return {
+        payload = {
             "ticker": ticker,
             "points": [{"t": p.timestamp.isoformat(), "v": p.value} for p in points],
             "shocks": shocks
         }
+        cache_set_json(cache_key, payload, ttl_seconds=300)
+        return payload

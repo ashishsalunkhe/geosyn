@@ -3,7 +3,20 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from app.models.v2 import CustomerV2, WatchlistV2
+from app.models.v2 import (
+    AlertV2,
+    CommodityV2,
+    CustomerAssetV2,
+    CustomerV2,
+    EventV2,
+    ExposureLinkV2,
+    FacilityV2,
+    PortV2,
+    RouteV2,
+    SupplierV2,
+    WatchlistItemV2,
+    WatchlistV2,
+)
 
 
 class CustomerServiceV2:
@@ -50,3 +63,60 @@ class CustomerServiceV2:
         self.db.commit()
         self.db.refresh(customer)
         return customer
+
+    def get_overview(self, customer: CustomerV2) -> dict:
+        exposure_link_count = self.db.query(ExposureLinkV2).filter(ExposureLinkV2.customer_id == customer.id).count()
+        supplier_count = self.db.query(SupplierV2).filter(SupplierV2.customer_id == customer.id).count()
+        facility_count = self.db.query(FacilityV2).filter(FacilityV2.customer_id == customer.id).count()
+        asset_count = self.db.query(CustomerAssetV2).filter(CustomerAssetV2.customer_id == customer.id).count()
+        watchlist_count = self.db.query(WatchlistV2).filter(WatchlistV2.customer_id == customer.id).count()
+        watchlist_item_count = (
+            self.db.query(WatchlistItemV2)
+            .join(WatchlistV2, WatchlistV2.id == WatchlistItemV2.watchlist_id)
+            .filter(WatchlistV2.customer_id == customer.id)
+            .count()
+        )
+        alert_count = self.db.query(AlertV2).filter(AlertV2.customer_id == customer.id).count()
+        open_alert_count = (
+            self.db.query(AlertV2)
+            .filter(AlertV2.customer_id == customer.id, AlertV2.status.notin_(["dismissed", "mitigated"]))
+            .count()
+        )
+        active_event_count = self.db.query(EventV2).filter(EventV2.status.in_(["active", "emerging"])).count()
+
+        shared_object_counts = {
+            "ports": self.db.query(PortV2).count(),
+            "routes": self.db.query(RouteV2).count(),
+            "commodities": self.db.query(CommodityV2).count(),
+        }
+
+        onboarding = {
+            "has_customer_profile": True,
+            "has_watchlists": watchlist_count > 0,
+            "has_watchlist_items": watchlist_item_count > 0,
+            "has_exposure_links": exposure_link_count > 0,
+            "ready_for_exposure_alerting": exposure_link_count > 0,
+        }
+
+        return {
+            "customer": {
+                "id": customer.id,
+                "name": customer.name,
+                "slug": customer.slug,
+                "industry": customer.industry,
+                "primary_region": customer.primary_region,
+            },
+            "counts": {
+                "watchlists": watchlist_count,
+                "watchlist_items": watchlist_item_count,
+                "exposure_links": exposure_link_count,
+                "suppliers": supplier_count,
+                "facilities": facility_count,
+                "customer_assets": asset_count,
+                "alerts_total": alert_count,
+                "alerts_open": open_alert_count,
+                "active_events": active_event_count,
+                **shared_object_counts,
+            },
+            "onboarding": onboarding,
+        }

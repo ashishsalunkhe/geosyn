@@ -3,15 +3,19 @@ from sqlalchemy.orm import Session
 from typing import List, Any
 from app.db.session import get_db
 from app.services.market_service import MarketService
+from app.workers.tasks import run_market_sync
 
 router = APIRouter()
 
 @router.post("/sync")
-async def sync_markets(db: Session = Depends(get_db)):
+async def sync_markets(enqueue: bool = False, db: Session = Depends(get_db)):
     """
     Sync market data into the database asynchronously.
     """
     try:
+        if enqueue:
+            task = run_market_sync.delay()
+            return {"status": "queued", "task_id": task.id, "task_name": "run_market_sync"}
         service = MarketService(db)
         await service.sync_market_data()
         return {"status": "success", "message": "Market data synced"}

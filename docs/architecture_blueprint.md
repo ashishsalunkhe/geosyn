@@ -97,14 +97,15 @@ graph TD
 
 The current repository already contains much of the right scaffolding:
 
-- App lifecycle and polling loop: [backend/app/main.py](/Users/ashishsalunkhe/My Projects/geosyn/backend/app/main.py:11)
+- API runtime and telemetry bootstrap: [backend/app/main.py](/Users/ashishsalunkhe/My Projects/geosyn/backend/app/main.py:1)
+- Queue runtime and scheduled workers: [backend/app/core/celery_app.py](/Users/ashishsalunkhe/My Projects/geosyn/backend/app/core/celery_app.py:1) and [backend/app/workers/tasks.py](/Users/ashishsalunkhe/My Projects/geosyn/backend/app/workers/tasks.py:1)
 - Ingestion coordination: [backend/app/services/ingestion_service.py](/Users/ashishsalunkhe/My Projects/geosyn/backend/app/services/ingestion_service.py:13)
 - Event clustering: [backend/app/services/clustering_service.py](/Users/ashishsalunkhe/My Projects/geosyn/backend/app/services/clustering_service.py:9)
 - Market ingestion: [backend/app/services/market_service.py](/Users/ashishsalunkhe/My Projects/geosyn/backend/app/services/market_service.py:10)
 - Intelligence brief synthesis: [backend/app/services/timeline_service.py](/Users/ashishsalunkhe/My Projects/geosyn/backend/app/services/timeline_service.py:11)
 - Relational model foundation: [backend/app/models/domain.py](/Users/ashishsalunkhe/My Projects/geosyn/backend/app/models/domain.py:1)
 
-The missing layer is not basic plumbing. It is exposure modeling, provenance, and stronger evaluation.
+The missing layer is no longer just basic plumbing. The next differentiators are stronger exposure modeling, provenance fidelity, and evaluation depth on top of the new production-oriented runtime.
 
 ## Logical Architecture Layers
 

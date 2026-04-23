@@ -9,6 +9,7 @@ from app.services.exposure_import_service import ExposureImportService
 from app.ingestion.gdelt_provider import GDELTProvider
 from app.ingestion.rss_provider import RSSProvider
 from app.ingestion.youtube_provider import YouTubeProvider
+from app.workers.tasks import run_news_ingestion, run_compliance_ingestion
 
 router = APIRouter()
 
@@ -16,10 +17,14 @@ class YouTubeIngestRequest(BaseModel):
     url: str
 
 @router.post("/trigger")
-def trigger_ingestion(db: Session = Depends(get_db)):
+def trigger_ingestion(enqueue: bool = False, db: Session = Depends(get_db)):
     """
     Manually trigger document ingestion from live GDELT and RSS sources.
     """
+    if enqueue:
+        task = run_news_ingestion.delay(True)
+        return {"status": "queued", "task_id": task.id, "task_name": "run_news_ingestion"}
+
     service = IngestionService(db)
     
     # 1. Fetch from GDELT
@@ -55,10 +60,15 @@ def ingest_youtube(request: YouTubeIngestRequest, db: Session = Depends(get_db))
 async def ingest_compliance(
     db: Session = Depends(get_db),
     query: str = "",
+    enqueue: bool = False,
 ):
     """
     Ingest compliance and sanctions-style official feed signals.
     """
+    if enqueue:
+        task = run_compliance_ingestion.delay(query)
+        return {"status": "queued", "task_id": task.id, "task_name": "run_compliance_ingestion", "query": query}
+
     service = IngestionService(db)
     docs = await service.ingest_compliance_signals(query=query)
     return {
@@ -86,6 +96,26 @@ async def import_exposure_csv(
         csv_text = raw.decode("utf-8")
         service = ExposureImportService(db)
         result = service.import_csv(csv_text, current_customer.id)
+        return {"status": "success", "customer_id": current_customer.id, **result}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/exposure/csv/validate")
+async def validate_exposure_csv(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_customer: CustomerV2 = Depends(get_current_customer),
+):
+    """
+    Validate an exposure CSV without writing it to the database.
+    Returns row counts, errors, warnings, and a preview sample.
+    """
+    raw = await file.read()
+    try:
+        csv_text = raw.decode("utf-8")
+        service = ExposureImportService(db)
+        result = service.validate_csv(csv_text, current_customer.id)
         return {"status": "success", "customer_id": current_customer.id, **result}
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

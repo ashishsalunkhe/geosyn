@@ -1,6 +1,7 @@
 import yfinance as yf
 from typing import List, Dict, Any
 from datetime import datetime, timedelta
+from app.ingestion.market_provider import MockMarketProvider
 
 class YahooMarketProvider:
     def __init__(self, ticker: str):
@@ -23,10 +24,12 @@ class YahooMarketProvider:
                     "value": round(float(row["Close"]), 2),
                     "volume": float(row["Volume"]) if "Volume" in row else 0.0
                 })
-            return points
+            if points:
+                return points
+            return MockMarketProvider(self.ticker).fetch_series(days=days)
         except Exception as e:
             print(f"Error fetching data for {self.ticker}: {e}")
-            return []
+            return MockMarketProvider(self.ticker).fetch_series(days=days)
 
     def fetch_assets(self) -> List[Dict[str, Any]]:
         """

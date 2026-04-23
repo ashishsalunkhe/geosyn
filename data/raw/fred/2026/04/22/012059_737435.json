@@ -1,0 +1,18 @@
+{
+  "ingested_at": "2026-04-22T01:20:59.737435",
+  "source": "fred",
+  "metadata": {
+    "external_id": "fred-DCOILWTICO-2026-04-21",
+    "provider": "FRED"
+  },
+  "data": {
+    "id": "fred-DCOILWTICO-2026-04-21",
+    "title": "Macro Signal: WTI Crude Oil Price",
+    "content": "FRED reports WTI Crude Oil Price at 73.8112 for period 2026-04-21.",
+    "url": "https://fred.stlouisfed.org/series/DCOILWTICO",
+    "published_at": "2026-04-21",
+    "source": "FRED",
+    "raw_val": 73.8112,
+    "indicator_code": "DCOILWTICO"
+  }
+}

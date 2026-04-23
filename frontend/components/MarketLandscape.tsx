@@ -12,6 +12,7 @@ import {
   Target,
   Users
 } from "lucide-react";
+import { getSeverityTone, getStatusTone } from "@/lib/status-theme";
 
 interface Scenario {
   id: string;
@@ -30,6 +31,67 @@ interface MarketLandscapeProps {
   onSelect: (topic: string) => void;
 }
 
+function humanizeToken(value?: string | null) {
+  if (!value) return "";
+  return value.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function relationToPhrase(value?: string | null) {
+  const normalized = (value || "").toLowerCase();
+  const mapping: Record<string, string> = {
+    depends_on: "depends on",
+    correlates_with: "moves with",
+    exposed_to: "is exposed to",
+    located_in: "operates in",
+    ships_through: "ships through",
+    sourced_from: "is sourced from",
+    linked_to: "is linked to",
+    supplied_by: "is supplied by",
+    impacts: "is affected by",
+  };
+  return mapping[normalized] || humanizeToken(normalized).toLowerCase();
+}
+
+function buildExposureSummary(alert: any) {
+  const topExposure = alert?.metadata?.top_exposure_match;
+  if (!topExposure) {
+    return alert?.summary_text || alert?.recommended_action || "Exposure-linked alert ready for review.";
+  }
+
+  const sourceName =
+    topExposure.source_object_name ||
+    humanizeToken(topExposure.source_object_id) ||
+    "this mapped asset";
+  const targetName =
+    topExposure.target_entity_name ||
+    alert?.headline ||
+    "the related event";
+  const relation = relationToPhrase(topExposure.relationship_type);
+
+  return `${sourceName} could be affected because it ${relation} ${targetName}.`;
+}
+
+function buildExposureTrigger(alert: any) {
+  const topExposure = alert?.metadata?.top_exposure_match;
+  const targetName = topExposure?.target_entity_name || alert?.headline;
+  if (!targetName) return "Exposure linked to a live risk event.";
+  return `Triggered by ${targetName}.`;
+}
+
+function buildExposureAction(alert: any) {
+  if (alert?.recommended_action) {
+    return alert.recommended_action;
+  }
+  const severity = (alert?.severity || "").toLowerCase();
+  const fallback: Record<string, string> = {
+    critical: "Escalate now and confirm business continuity coverage.",
+    high: "Review impact and assign an owner this shift.",
+    medium: "Monitor closely and reassess within 24 hours.",
+    low: "Track for changes before taking action.",
+  };
+  return fallback[severity] || "Review the mapped exposure and decide next steps.";
+}
+
 export default function MarketLandscape({ scenarios, trending, alerts = [], onSelect }: MarketLandscapeProps) {
   const watchAlerts = alerts.filter((a) => a.alert_type === "event_exposure" || a.metadata?.top_exposure_match);
   return (
@@ -37,7 +99,7 @@ export default function MarketLandscape({ scenarios, trending, alerts = [], onSe
       
       {/* Tracked Scenarios Grid */}
       <section>
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-primary rounded-xl text-white shadow-sm">
                 <Target size={18} />
@@ -69,7 +131,7 @@ export default function MarketLandscape({ scenarios, trending, alerts = [], onSe
 
       {/* Global Community Discovery */}
       <section>
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-secondary rounded-xl text-primary border border-border">
                 <Globe size={18} />
@@ -84,7 +146,7 @@ export default function MarketLandscape({ scenarios, trending, alerts = [], onSe
             </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
           {trending.map((s, idx) => (
             <motion.div 
               key={s.id}
@@ -92,17 +154,23 @@ export default function MarketLandscape({ scenarios, trending, alerts = [], onSe
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 + (idx * 0.1) }}
               onClick={() => onSelect(s.topic)}
-              className="glass-panel p-5 bg-panel-bg border-border group hover:border-primary transition-all cursor-pointer relative overflow-hidden rounded-2xl shadow-sm"
+              className="glass-panel min-h-[182px] p-5 bg-panel-bg border-border group hover:border-primary transition-all cursor-pointer relative overflow-hidden rounded-2xl shadow-sm flex flex-col"
             >
-              <div className="flex items-center justify-between mb-4">
-                 <span className="text-[7px] font-black text-primary tracking-[0.3em] uppercase">{s.region} / {s.sector}</span>
-                 <div className="px-1.5 py-0.5 bg-secondary border border-border rounded text-[7px] font-black text-text-muted flex items-center gap-1 group-hover:text-primary transition-colors">
-                    <TrendingUp size={8} /> {s.community_interest || "HIGH"} INTEREST
-                 </div>
+              <div className="mb-4">
+                 <span className="block max-w-[70%] text-[10px] font-bold text-primary uppercase tracking-[0.18em] leading-snug">
+                   {s.region} / {s.sector}
+                 </span>
               </div>
-              <h4 className="text-[11px] font-black text-foreground italic uppercase tracking-tight leading-snug group-hover:text-primary transition-colors mb-2">
-                {s.topic}
-              </h4>
+              <div className="flex min-h-[84px] flex-1 items-center justify-center">
+                <h4 className="mx-auto max-w-[12rem] wrap-pretty text-center text-[14px] font-black text-foreground italic uppercase tracking-tight leading-[1.08] group-hover:text-primary transition-colors">
+                  {s.topic}
+                </h4>
+              </div>
+              <div className="mt-4 flex justify-center">
+                <div className={`rounded-md border px-2.5 py-1 text-[9px] font-bold flex items-center gap-1 leading-none transition-colors ${getStatusTone(s.status).pill}`}>
+                  <TrendingUp size={8} /> {s.community_interest || "HIGH"} INTEREST
+                </div>
+              </div>
               <div className="absolute -bottom-2 -right-2 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity pointer-events-none">
                  <Globe size={80} />
               </div>
@@ -113,7 +181,7 @@ export default function MarketLandscape({ scenarios, trending, alerts = [], onSe
 
       {/* Strategic Market Assets to Watch */}
       <section>
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-hazard/20 border border-hazard/30 rounded-xl text-hazard shadow-sm">
                 <AlertCircle size={18} />
@@ -134,36 +202,55 @@ export default function MarketLandscape({ scenarios, trending, alerts = [], onSe
              <p className="text-[10px] font-black text-text-muted uppercase tracking-widest italic">No significant market deviations detected.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
             {watchAlerts
               .slice(0, 8)
               .map((alert, idx) => {
                 const topExposure = alert.metadata?.top_exposure_match;
                 const diff = topExposure?.exposure_weight || alert.metadata?.risk_score?.score_value || 0;
+                const severityTone = getSeverityTone(alert.severity);
                 return (
                   <motion.div 
                     key={alert.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 * idx }}
-                    className="glass-panel p-5 bg-panel-bg border-border group hover:border-border/80 transition-all rounded-2xl shadow-sm relative overflow-hidden"
+                    className="glass-panel min-h-[270px] p-6 bg-panel-bg border-border group hover:border-border/80 transition-all rounded-2xl shadow-sm relative overflow-hidden flex flex-col"
                   >
-                    <div className="flex items-start justify-between mb-4">
-                       <div className="flex flex-col">
-                           <span className="text-[8px] font-black text-text-muted tracking-[0.2em] uppercase mb-1">
-                               {topExposure?.source_object_type || alert.alert_type}
-                           </span>
-                           <h4 className="text-[16px] font-black text-foreground italic uppercase tracking-tight leading-none group-hover:text-primary transition-colors">
+                    <div className="mb-5 flex items-start justify-between gap-4">
+                       <div className="min-w-0 flex-1">
+                           <span className="block text-[10px] font-bold text-text-muted tracking-[0.18em] uppercase leading-snug mb-2">
+                               {humanizeToken(topExposure?.source_object_type || alert.alert_type)}
+                            </span>
+                           <h4 className={`wrap-pretty text-center text-[16px] font-black italic uppercase tracking-tight leading-[1.06] transition-colors ${severityTone.text}`}>
                                {topExposure?.source_object_name || alert.headline}
-                           </h4>
+                            </h4>
                        </div>
-                       <div className={`text-[12px] font-black px-2 py-1 rounded-lg border ${alert.severity === 'critical' || alert.severity === 'high' ? 'bg-error/10 text-error border-error/20' : 'bg-success/10 text-success border-success/20'}`}>
+                       <div className={`shrink-0 text-[18px] leading-none font-black px-3 py-2 rounded-xl border ${severityTone.pill}`}>
                            {(diff * 100).toFixed(0)}%
                        </div>
                     </div>
-                    <p className="text-[9px] font-bold text-text-muted/80 leading-relaxed uppercase overflow-hidden line-clamp-3">
-                       {alert.summary_text || alert.recommended_action || "Mapped exposure alert ready for review."}
-                    </p>
+                    <div className="flex flex-1 items-center justify-center py-4">
+                      <div className="mx-auto max-w-[13rem]">
+                        <h4 className={`wrap-pretty text-center text-[16px] font-black italic uppercase tracking-tight leading-[1.08] ${severityTone.text}`}>
+                          {topExposure?.source_object_name || alert.headline}
+                        </h4>
+                      </div>
+                    </div>
+                    <div className="mt-auto space-y-3 border-t border-border/60 pt-4">
+                      <div>
+                        <div className="mb-1 text-[9px] font-bold uppercase tracking-[0.14em] text-text-muted/70">What changed</div>
+                        <p className="wrap-pretty text-[12px] font-semibold leading-relaxed text-foreground/90">
+                          {buildExposureTrigger(alert)}
+                        </p>
+                      </div>
+                      <div>
+                        <div className="mb-1 text-[9px] font-bold uppercase tracking-[0.14em] text-text-muted/70">Suggested response</div>
+                        <p className="wrap-pretty text-[12px] font-semibold leading-relaxed text-text-muted/90">
+                          {buildExposureAction(alert)}
+                        </p>
+                      </div>
+                    </div>
                   </motion.div>
                 );
             })}
@@ -176,13 +263,7 @@ export default function MarketLandscape({ scenarios, trending, alerts = [], onSe
 }
 
 function ScenarioCard({ scenario, idx, onClick }: { scenario: Scenario, idx: number, onClick: () => void }) {
-  const statusColors = {
-      CRITICAL: "text-error bg-error/10 border-error/20",
-      ACTIVE: "text-success bg-success/10 border-success/20",
-      EMERGING: "text-primary bg-primary/10 border-primary/20",
-      STABILIZED: "text-success bg-success/10 border-success/20",
-      RESOLVING: "text-text-muted bg-text-muted/10 border-border"
-  };
+  const statusTone = getStatusTone(scenario.status);
 
   return (
     <motion.div
@@ -190,30 +271,35 @@ function ScenarioCard({ scenario, idx, onClick }: { scenario: Scenario, idx: num
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: idx * 0.1 }}
       onClick={onClick}
-      className="glass-panel p-6 bg-panel-bg border-border group hover:border-primary transition-all cursor-pointer relative overflow-hidden min-h-[180px] flex flex-col rounded-2xl shadow-sm"
+      className="glass-panel min-h-[220px] p-6 bg-panel-bg border-border group hover:border-primary transition-all cursor-pointer relative overflow-hidden flex flex-col rounded-2xl shadow-sm"
     >
-      <div className="flex items-start justify-between mb-6">
-        <div className="flex flex-col">
-            <span className="text-[8px] font-black text-text-muted tracking-widest uppercase mb-1">{scenario.region} // {scenario.sector}</span>
-            <h4 className="text-[15px] font-black text-foreground italic group-hover:text-primary transition-colors leading-tight uppercase tracking-tight">
-                {scenario.topic}
-            </h4>
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+            <span className="block text-[9px] font-bold text-text-muted tracking-[0.14em] uppercase leading-snug mb-2">
+              {scenario.region} // {scenario.sector}
+            </span>
         </div>
-        <div className={`px-2 py-1 rounded-lg text-[8px] font-black tracking-widest transition-all border ${statusColors[scenario.status]}`}>
+        <div className={`shrink-0 rounded-xl px-3 py-2 text-[9px] font-bold tracking-[0.12em] transition-all border leading-none ${statusTone.pill}`}>
             {scenario.status}
         </div>
       </div>
 
-      <div className="mt-auto space-y-4 pt-4 border-t border-border/60">
+      <div className="flex flex-1 items-center justify-center py-6">
+        <h4 className="mx-auto max-w-[13rem] wrap-pretty text-center text-[15px] font-black text-foreground italic uppercase tracking-tight leading-[1.08] group-hover:text-primary transition-colors">
+          {scenario.topic}
+        </h4>
+      </div>
+
+      <div className="mt-auto space-y-4 border-t border-border/60 pt-4">
         <div className="flex justify-between items-end">
             <div className="flex flex-col gap-1">
-               <span className="text-[7px] font-black text-text-muted uppercase tracking-widest">TACTICAL RISK SCORE</span>
+               <span className="text-[8px] font-bold text-text-muted uppercase tracking-[0.14em]">Tactical Risk Score</span>
                <div className="flex items-center gap-2">
-                  <div className={`text-xl font-black italic ${scenario.risk_score > 0.7 ? 'text-error' : 'text-primary'}`}>
+                  <div className={`text-xl font-black italic ${scenario.risk_score > 0.7 ? 'text-error' : statusTone.text}`}>
                     {(scenario.risk_score * 100).toFixed(0)}%
                   </div>
                   <div className="h-1 w-16 bg-secondary rounded-full overflow-hidden">
-                     <div className={`h-full ${scenario.risk_score > 0.7 ? 'bg-error' : 'bg-primary'}`} style={{ width: `${scenario.risk_score * 100}%` }} />
+                     <div className={`h-full ${scenario.risk_score > 0.7 ? 'bg-error' : statusTone.solid}`} style={{ width: `${scenario.risk_score * 100}%` }} />
                   </div>
                </div>
             </div>

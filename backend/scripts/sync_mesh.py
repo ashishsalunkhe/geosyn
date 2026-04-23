@@ -1,55 +1,50 @@
-import asyncio
-import sys
-import os
-from datetime import datetime
+import argparse
+import time
 
-# Ensure app is in path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from celery.result import AsyncResult
 
-from app.db.base import Base # Import Base with all models registered
-from app.db.session import SessionLocal, engine
-from app.services.ingestion_service import IngestionService
-from app.services.market_service import MarketService
-from app.services.clustering_service import ClusteringService
-from app.services.nexus_service import NexusService
+from app.core.celery_app import celery_app
+from app.workers.tasks import (
+    run_alert_generation,
+    run_clustering,
+    run_market_sync,
+    run_news_ingestion,
+    run_nexus_sync,
+)
 
-async def main():
-    print(f"--- GeoSyn Mesh Sync Started [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ---")
-    
-    # Ensure local schema is initialized (Phase 2 Hardening)
-    Base.metadata.create_all(bind=engine)
-    
-    db = SessionLocal()
-    try:
-        # 1. Institutional Macro & Markets
-        print("[1/5] Syncing Markets...")
-        market_service = MarketService(db)
-        await market_service.sync_all_markets()
 
-        # 2. Institutional Macro (IMF, WB, FRED Labor/GDP)
-        print("[2/5] Syncing Institutional Macro Anchors (IMF, WB, Labor)...")
-        ingestion_service = IngestionService(db)
-        await ingestion_service.ingest_institutional_macro()
-        
-        # 3. Intelligence Ingestion (GDELT / News)
-        print("[3/5] Ingesting Intelligence Signals (GDELT / News)...")
-        await ingestion_service.ingest_latest_news(sync_gdelt=True)
-        
-        # 4. Local AI Clustering (Semantic Mesh)
-        print("[4/5] Running Local AI Semantic Clustering...")
-        cluster_service = ClusteringService(db)
-        cluster_service.run_clustering()
-        
-        # 5. Knowledge Graph Synthesis (Causal Nexus)
-        print("[5/5] Rebuilding Causal Nexus Graph...")
-        nexus_service = NexusService(db)
-        nexus_service.sync_knowledge_graph()
-        
-        print(f"--- GeoSyn Mesh Sync Complete! [{datetime.now().strftime('%H:%M:%S')}] ---")
-    except Exception as e:
-        print(f"FAILED: Mesh Sync error: {e}")
-    finally:
-        db.close()
+def wait_for_task(task_id: str, poll_interval: float = 2.0) -> dict:
+    while True:
+        result = AsyncResult(task_id, app=celery_app)
+        if result.status == "SUCCESS":
+            return {"task_id": task_id, "status": result.status, "result": result.result}
+        if result.status == "FAILURE":
+            return {"task_id": task_id, "status": result.status, "error": str(result.result)}
+        time.sleep(poll_interval)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Queue a full GeoSyn mesh sync through Celery.")
+    parser.add_argument("--customer-id", help="Optional customer ID for alert generation.")
+    parser.add_argument("--wait", action="store_true", help="Wait for each task to complete before continuing.")
+    args = parser.parse_args()
+
+    tasks = [
+        ("market_sync", run_market_sync.delay()),
+        ("news_ingestion", run_news_ingestion.delay(True)),
+        ("clustering", run_clustering.delay()),
+        ("nexus_sync", run_nexus_sync.delay()),
+    ]
+
+    if args.customer_id:
+        tasks.append(("alert_generation", run_alert_generation.delay(args.customer_id)))
+
+    for name, task in tasks:
+        print(f"[queued] {name}: {task.id}")
+        if args.wait:
+            result = wait_for_task(task.id)
+            print(result)
+
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

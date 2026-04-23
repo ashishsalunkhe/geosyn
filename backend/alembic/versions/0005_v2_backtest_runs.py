@@ -8,8 +8,8 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision = "0005_v2_backtest_runs"
-down_revision = "0004_v2_event_timelines"
+revision = "5_backtest"
+down_revision = "4_timelines"
 branch_labels = None
 depends_on = None
 
@@ -25,8 +25,7 @@ def upgrade() -> None:
         sa.Column("started_at", sa.DateTime(), nullable=False),
         sa.Column("completed_at", sa.DateTime(), nullable=True),
         sa.Column("status", sa.String(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), nullable=False),
-    )
+        sa.Column("created_at", sa.DateTime(), nullable=False))
     op.create_index("ix_backtest_runs_run_name", "backtest_runs", ["run_name"])
     op.create_index("ix_backtest_runs_customer_id", "backtest_runs", ["customer_id"])
     op.create_index("ix_backtest_runs_started_at", "backtest_runs", ["started_at"])

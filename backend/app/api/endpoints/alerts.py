@@ -8,6 +8,7 @@ from app.models.domain import Alert
 from app.models.v2 import CustomerV2
 from datetime import datetime, timedelta
 from app.services.alert_service_v2 import AlertServiceV2
+from app.workers.tasks import run_alert_generation
 
 router = APIRouter()
 
@@ -58,9 +59,10 @@ def read_alerts_v2(
     db: Session = Depends(get_db),
     current_customer: CustomerV2 = Depends(get_current_customer),
     limit: int = 25,
+    status: str | None = None,
 ):
     service = AlertServiceV2(db)
-    alerts = service.list_alerts(current_customer.id, limit=limit)
+    alerts = service.list_alerts(current_customer.id, limit=limit, status=status)
     return [
         {
             "id": a.id,
@@ -82,7 +84,11 @@ def read_alerts_v2(
 def generate_alerts_v2(
     db: Session = Depends(get_db),
     current_customer: CustomerV2 = Depends(get_current_customer),
+    enqueue: bool = False,
 ):
+    if enqueue:
+        task = run_alert_generation.delay(current_customer.id)
+        return {"status": "queued", "task_id": task.id, "task_name": "run_alert_generation"}
     service = AlertServiceV2(db)
     return {"status": "success", **service.generate_for_customer(current_customer)}
 
@@ -134,3 +140,22 @@ def add_alert_v2_action(
         return service.add_action(alert_id, current_customer.id, payload.action_type, payload.actor_id, payload.notes)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.get("/v2/{alert_id}/actions", response_model=List[dict])
+def read_alert_v2_actions(
+    alert_id: str,
+    db: Session = Depends(get_db),
+    current_customer: CustomerV2 = Depends(get_current_customer),
+):
+    service = AlertServiceV2(db)
+    return service.list_actions(alert_id, current_customer.id)
+
+
+@router.get("/v2/workflow/config", response_model=dict)
+def read_alert_v2_workflow_config(
+    db: Session = Depends(get_db),
+    current_customer: CustomerV2 = Depends(get_current_customer),
+):
+    service = AlertServiceV2(db)
+    return service.workflow_config()

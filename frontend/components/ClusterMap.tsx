@@ -2,36 +2,35 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Target, AlertTriangle, MessageSquare, ChevronRight, BarChart3, Radar, Network, Clock3, CheckCircle2, Flag } from "lucide-react";
-import { createEventEvaluation, fetchEventEvaluation, fetchEventTimeline, type EventEvaluationLabel, type EventTimelineItem, type EventV2 } from "@/lib/api";
+import { Shield, Target, AlertTriangle, MessageSquare, ChevronRight, BarChart3, Radar, Network, Clock3, CheckCircle2, Flag, Building2, Eye } from "lucide-react";
+import { createEventEvaluation, fetchEventEvaluation, fetchEventTimeline, fetchEventV2, type EventEvaluationLabel, type EventTimelineItem, type EventV2 } from "@/lib/api";
+import { getSeverityTone } from "@/lib/status-theme";
 
 interface EventClusterProps {
   clusters: EventV2[];
   onAnalyze: (topic: string) => void;
+  onInspectEvent?: (eventId: string) => void;
+  selectedEventId?: string | null;
 }
 
-const severityTone: Record<string, string> = {
-  critical: "text-error",
-  high: "text-hazard",
-  medium: "text-primary",
-  low: "text-success",
-};
-
-export default function ClusterMap({ clusters, onAnalyze }: EventClusterProps) {
+export default function ClusterMap({ clusters, onAnalyze, onInspectEvent, selectedEventId }: EventClusterProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [details, setDetails] = useState<Record<string, EventV2>>({});
   const [timelines, setTimelines] = useState<Record<string, EventTimelineItem[]>>({});
   const [evaluations, setEvaluations] = useState<Record<string, EventEvaluationLabel[]>>({});
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [actionId, setActionId] = useState<string | null>(null);
 
   const loadDetail = async (eventId: string) => {
-    if (timelines[eventId] && evaluations[eventId]) return;
+    if (timelines[eventId] && evaluations[eventId] && details[eventId]) return;
     setLoadingId(eventId);
     try {
-      const [timelineRows, evaluationRows] = await Promise.all([
+      const [eventDetail, timelineRows, evaluationRows] = await Promise.all([
+        fetchEventV2(eventId),
         fetchEventTimeline(eventId),
         fetchEventEvaluation(eventId),
       ]);
+      setDetails((prev) => ({ ...prev, [eventId]: eventDetail }));
       setTimelines((prev) => ({ ...prev, [eventId]: timelineRows }));
       setEvaluations((prev) => ({ ...prev, [eventId]: evaluationRows }));
     } catch (error) {
@@ -94,16 +93,24 @@ export default function ClusterMap({ clusters, onAnalyze }: EventClusterProps) {
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:gap-6">
         {clusters.map((cluster, idx) => {
+          const tone = getSeverityTone(cluster.risk_score?.severity);
           const isExpanded = expandedId === cluster.id;
           const timeline = timelines[cluster.id] || [];
           const evaluation = evaluations[cluster.id] || [];
+          const detail = details[cluster.id] || cluster;
+          const displayDocuments = detail.documents || cluster.documents || [];
+          const displayEntities = detail.entities || cluster.entities || [];
+          const displayExposures = detail.exposure_matches || cluster.exposure_matches || [];
+          const displayWatchlists = detail.matched_watchlists || cluster.matched_watchlists || [];
           return (
             <motion.div
               key={cluster.id || idx}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: idx * 0.06 }}
-              className="glass-panel p-4 bg-panel-bg shadow-sm rounded-2xl border border-border group hover:border-primary transition-all relative overflow-hidden"
+              className={`glass-panel p-4 bg-panel-bg shadow-sm rounded-2xl border group transition-all relative overflow-hidden ${
+                selectedEventId === cluster.id ? "border-primary ring-1 ring-primary/20" : "border-border hover:border-primary"
+              }`}
             >
               <div className="relative z-10 mb-3 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-2">
@@ -115,7 +122,7 @@ export default function ClusterMap({ clusters, onAnalyze }: EventClusterProps) {
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`text-[8px] font-black uppercase tracking-widest ${severityTone[cluster.risk_score?.severity || "medium"] || "text-primary"}`}>
+                  <span className={`text-[8px] font-black uppercase tracking-widest ${tone.text}`}>
                     {cluster.risk_score?.severity || cluster.status}
                   </span>
                   <span className="text-[9px] font-black text-foreground italic">
@@ -138,18 +145,18 @@ export default function ClusterMap({ clusters, onAnalyze }: EventClusterProps) {
                 <MetricCard icon={Network} label="Exposure" value={String(cluster.exposure_matches?.length || 0)} />
               </div>
 
-              {cluster.exposure_matches?.length ? (
+              {displayExposures?.length ? (
                 <div className="mb-4 rounded-xl border border-primary/20 bg-primary/5 p-3">
                   <div className="flex items-center gap-2 mb-1">
                     <AlertTriangle size={11} className="text-primary" />
                     <span className="text-[8px] font-black uppercase tracking-widest text-primary">Top Exposure Path</span>
                   </div>
                   <p className="text-[9px] font-bold text-foreground leading-snug">
-                    {(cluster.exposure_matches[0].source_object_name || cluster.exposure_matches[0].source_object_id)}
+                    {(displayExposures[0].source_object_name || displayExposures[0].source_object_id)}
                     {" -> "}
-                    {cluster.exposure_matches[0].relationship_type}
+                    {displayExposures[0].relationship_type}
                     {" -> "}
-                    {cluster.exposure_matches[0].target_entity_name || "mapped entity"}
+                    {displayExposures[0].target_entity_name || "mapped entity"}
                   </p>
                 </div>
               ) : null}
@@ -176,6 +183,50 @@ export default function ClusterMap({ clusters, onAnalyze }: EventClusterProps) {
 
                       <div className="rounded-xl border border-border bg-background/40 p-3">
                         <div className="flex items-center gap-2 mb-2">
+                          <Network size={12} className="text-primary" />
+                          <span className="text-[8px] font-black uppercase tracking-widest text-primary">Watchlist Matches</span>
+                        </div>
+                        {displayWatchlists?.length ? (
+                          <div className="flex flex-wrap gap-2">
+                            {displayWatchlists.slice(0, 6).map((item, index) => (
+                              <span
+                                key={`${item.watchlist_id}-${item.entity_id || index}`}
+                                className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2 py-1 text-[8px] font-black uppercase tracking-widest text-primary"
+                              >
+                                {item.item_type}
+                                {typeof item.criticality_score === "number" ? ` ${Math.round(item.criticality_score * 100)}%` : ""}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-[9px] font-bold text-text-muted">No watchlist hits for this event.</p>
+                        )}
+                      </div>
+
+                      <div className="rounded-xl border border-border bg-background/40 p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Building2 size={12} className="text-primary" />
+                          <span className="text-[8px] font-black uppercase tracking-widest text-primary">Linked Entities</span>
+                        </div>
+                        {displayEntities.length ? (
+                          <div className="flex flex-wrap gap-2">
+                            {displayEntities.slice(0, 8).map((entity) => (
+                              <span
+                                key={entity.id}
+                                className="inline-flex items-center gap-1 rounded-full border border-border bg-panel-bg/40 px-2 py-1 text-[8px] font-black uppercase tracking-widest text-text-muted"
+                              >
+                                {entity.canonical_name}
+                                <span className="text-primary">{entity.entity_type}</span>
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-[9px] font-bold text-text-muted">No linked entities available.</p>
+                        )}
+                      </div>
+
+                      <div className="rounded-xl border border-border bg-background/40 p-3">
+                        <div className="flex items-center gap-2 mb-2">
                           <Clock3 size={12} className="text-primary" />
                           <span className="text-[8px] font-black uppercase tracking-widest text-primary">Timeline Sample</span>
                         </div>
@@ -195,6 +246,38 @@ export default function ClusterMap({ clusters, onAnalyze }: EventClusterProps) {
                           </div>
                         ) : (
                           <p className="text-[9px] font-bold text-text-muted">No timeline rows yet.</p>
+                        )}
+                      </div>
+
+                      <div className="rounded-xl border border-border bg-background/40 p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <MessageSquare size={12} className="text-primary" />
+                          <span className="text-[8px] font-black uppercase tracking-widest text-primary">Supporting Evidence</span>
+                        </div>
+                        {displayDocuments.length ? (
+                          <div className="space-y-2">
+                            {displayDocuments.slice(0, 5).map((doc) => (
+                              <div key={doc.id} className="rounded-xl border border-border/70 bg-panel-bg/30 p-3">
+                                <div className="text-[9px] font-black text-foreground leading-snug">{doc.title}</div>
+                                <div className="mt-1 text-[8px] font-bold uppercase tracking-widest text-text-muted">
+                                  {doc.published_at ? new Date(doc.published_at).toLocaleDateString() : "Unknown date"}
+                                  {doc.is_primary ? " / primary" : ""}
+                                </div>
+                                {doc.url ? (
+                                  <a
+                                    href={doc.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="mt-2 inline-block text-[8px] font-black uppercase tracking-widest text-primary hover:underline"
+                                  >
+                                    Open source
+                                  </a>
+                                ) : null}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-[9px] font-bold text-text-muted">No supporting documents available.</p>
                         )}
                       </div>
 
@@ -255,6 +338,12 @@ export default function ClusterMap({ clusters, onAnalyze }: EventClusterProps) {
                   </span>
                   <ChevronRight size={14} className={`text-primary transition-transform ${isExpanded ? "rotate-90" : "group-hover:translate-x-0.5"}`} />
                 </button>
+                {onInspectEvent ? (
+                  <button className="flex items-center gap-1 group/btn" onClick={() => onInspectEvent(cluster.id)}>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-opacity">Review</span>
+                    <Eye size={13} className="text-primary transition-transform group-hover/btn:scale-105" />
+                  </button>
+                ) : null}
                 <button className="flex items-center gap-1 group/btn" onClick={() => onAnalyze(cluster.canonical_title)}>
                   <span className="text-[8px] font-black uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-opacity">Analyze</span>
                   <ChevronRight size={14} className="text-primary group-hover:translate-x-0.5 transition-transform" />

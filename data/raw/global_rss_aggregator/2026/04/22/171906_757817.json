@@ -1,0 +1,21 @@
+{
+  "ingested_at": "2026-04-22T17:19:06.757817",
+  "source": "global_rss_aggregator",
+  "metadata": {
+    "external_id": "https://www.bbc.com/news/articles/c80m4822m1no?at_medium=RSS&at_campaign=rss",
+    "provider": "Global RSS Aggregator"
+  },
+  "data": {
+    "id": "https://www.bbc.com/news/articles/c80m4822m1no?at_medium=RSS&at_campaign=rss",
+    "title": "Pope Leo criticises Equatorial Guinea prisons as he winds up Africa tour",
+    "content": "The Pope gives a frank and passionate speech, the likes of which have characterised his tour of Africa.",
+    "url": "https://www.bbc.com/news/articles/c80m4822m1no?at_medium=RSS&at_campaign=rss",
+    "source": "BBC NEWS",
+    "seendate": "2026-04-22T18:04:33Z",
+    "tone": 0.0,
+    "themes": [
+      "MACRO",
+      "GEO"
+    ]
+  }
+}

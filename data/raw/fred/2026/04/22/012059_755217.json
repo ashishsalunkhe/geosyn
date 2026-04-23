@@ -1,0 +1,18 @@
+{
+  "ingested_at": "2026-04-22T01:20:59.755217",
+  "source": "fred",
+  "metadata": {
+    "external_id": "fred-CHIPMIADJMEI-2026-04-21",
+    "provider": "FRED"
+  },
+  "data": {
+    "id": "fred-CHIPMIADJMEI-2026-04-21",
+    "title": "Macro Signal: Chinese Manufacturing PMI",
+    "content": "FRED reports Chinese Manufacturing PMI at 100.026 for period 2026-04-21.",
+    "url": "https://fred.stlouisfed.org/series/CHIPMIADJMEI",
+    "published_at": "2026-04-21",
+    "source": "FRED",
+    "raw_val": 100.026,
+    "indicator_code": "CHIPMIADJMEI"
+  }
+}

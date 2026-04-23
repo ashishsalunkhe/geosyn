@@ -56,7 +56,7 @@ export default function ParticipantDirectory({ records }: ParticipantDirectoryPr
           </div>
 
           <div className="mb-6">
-            <h4 className="text-sm font-black text-foreground italic truncate">{p.name}</h4>
+            <h4 className="wrap-anywhere text-sm font-black text-foreground italic">{p.name}</h4>
             <span className="text-[9px] font-bold text-text-muted/60 uppercase tracking-widest">{p.type}</span>
           </div>
 

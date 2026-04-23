@@ -7,6 +7,7 @@ from app.services.event_service_v2 import EventServiceV2
 import numpy as np
 
 from app.pipelines.normalization import NormalizationPipeline
+from app.core.metrics import clustering_runs_total
 
 class ClusteringService:
     def __init__(self, db: Session):
@@ -43,6 +44,7 @@ class ClusteringService:
                 self.event_service_v2.sync_document_to_cluster_event(doc, new_cluster)
 
         self.db.commit()
+        clustering_runs_total.inc()
         return self.db.query(EventCluster).all()
 
 

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.endpoints import documents, events, markets, claims, ingestion, clustering, scenarios, alerts, nexus, intelligence, analytics, evaluation
+from app.api.endpoints import customers, documents, events, markets, claims, ingestion, clustering, scenarios, alerts, nexus, intelligence, analytics, evaluation, watchlists, ops
 
 api_router = APIRouter()
 api_router.include_router(documents.router, prefix="/documents", tags=["documents"])
@@ -14,3 +14,6 @@ api_router.include_router(nexus.router, prefix="/nexus", tags=["nexus"])
 api_router.include_router(intelligence.router, prefix="/intelligence", tags=["intelligence"])
 api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
 api_router.include_router(evaluation.router, prefix="/evaluation", tags=["evaluation"])
+api_router.include_router(customers.router, prefix="/customers", tags=["customers"])
+api_router.include_router(watchlists.router, prefix="/watchlists", tags=["watchlists"])
+api_router.include_router(ops.router, prefix="/ops", tags=["ops"])
